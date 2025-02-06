@@ -31,6 +31,7 @@ export default {
     copy({
       targets: [
         { src: 'html/index.html', dest: 'dist/frontend' },
+        { src: 'html/inter.woff2', dest: 'dist/frontend' },
         {
           src: 'html/style.css',
           dest: 'dist/frontend',
