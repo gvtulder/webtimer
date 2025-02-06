@@ -31,6 +31,11 @@ export default {
         { src: 'html/timer.html', dest: 'dist/frontend' },
         { src: 'html/inter.woff2', dest: 'dist/frontend' },
         {
+          src: 'node_modules/normalize.css/normalize.css',
+          dest: 'dist/frontend',
+          transform: (contents) => new CleanCSS().minify(contents).styles
+        },
+        {
           src: 'html/style.css',
           dest: 'dist/frontend',
           transform: (contents) => new CleanCSS().minify(contents).styles

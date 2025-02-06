@@ -21,10 +21,6 @@ export class ControlsDisplay {
         div.className = 'controls-display';
         this.element = div;
 
-        const ternary = document.createElement('div');
-        ternary.className = 'controls ternary';
-        div.appendChild(ternary);
-
         const secondary = document.createElement('div');
         secondary.className = 'controls secondary';
         div.appendChild(secondary);
@@ -64,52 +60,57 @@ export class ControlsDisplay {
             () => { this.controller.toggleBlack() }
         );
 
-        const secondarySet = document.createElement('div');
-        secondarySet.className = 'controls secondarySet';
-        secondary.appendChild(secondarySet);
+        const secondarySet = new ButtonList('secondarySet');
+        secondary.appendChild(secondarySet.element);
 
-        for (const i of [5, 10, 15, 30, 45, 60]) {
-            addButton(
-                secondarySet,
+        for (const i of [60, 45, 30, 15, 10, 5]) {
+            secondarySet.add(new Button(
                 `set${i}00`, `${i}:00`, null,
                 () => { this.controller.setRemainingSeconds(i * 60) }
-            );
+            ), i == 15);
         }
 
-        const secondaryAdd = document.createElement('div');
-        secondaryAdd.className = 'controls secondaryAdd';
-        secondary.appendChild(secondaryAdd);
+        const secondarySub = new ButtonList('secondarySub');
+        secondary.appendChild(secondarySub.element);
 
-        addButton(
-            secondaryAdd,
+        secondarySub.add(new Button(
             'sub1000', '&ndash;10:00', null,
             () => { this.controller.addRemainingSeconds(-600) }
-        );
-        addButton(
-            secondaryAdd,
+        ));
+        secondarySub.add(new Button(
             'sub500', '&ndash;5:00', null,
             () => { this.controller.addRemainingSeconds(-300) }
-        );
-        addButton(
-            secondaryAdd,
+        ));
+        secondarySub.add(new Button(
             'sub100', '&ndash;1:00', null,
             () => { this.controller.addRemainingSeconds(-60) }
-        );
-        addButton(
-            secondaryAdd,
+        ), true);
+        secondarySub.add(new Button(
+            'sub30', '&ndash;0:30', null,
+            () => { this.controller.addRemainingSeconds(-30) }
+        ));
+
+        const secondaryAdd = new ButtonList('secondaryAdd');
+        secondary.appendChild(secondaryAdd.element);
+
+        secondaryAdd.add(new Button(
             'add1000', '+10:00', null,
             () => { this.controller.addRemainingSeconds(600) }
-        );
-        addButton(
-            secondaryAdd,
+        ));
+        secondaryAdd.add(new Button(
             'add500', '+5:00', null,
             () => { this.controller.addRemainingSeconds(300) }
-        );
-        addButton(
-            secondaryAdd,
+        ));
+        secondaryAdd.add(new Button(
             'add100', '+1:00', null,
             () => { this.controller.addRemainingSeconds(60) }
-        );
+        ), true);
+        secondaryAdd.add(new Button(
+            'add30', '+0:30', null,
+            () => { this.controller.addRemainingSeconds(30) }
+        ));
+
+        this.addDropdownHandlers();
     }
 
     handleTimerEvent(event : TimerEvent) {
@@ -119,13 +120,90 @@ export class ControlsDisplay {
             this.btnBlack.toggleOnOff(event.black);
         }
     }
+
+    addDropdownHandlers() {
+        document.addEventListener('click', (evt) => {
+            const tgtButton = evt.target && (evt.target as HTMLElement).closest('button.up');
+            const tgtList = tgtButton && tgtButton.closest('.button-list');
+            for (const list of document.getElementsByClassName('button-list')) {
+            list.classList.toggle('expanded', (list === tgtList) ? undefined : false);
+            }
+        });
+    }
 }
 
 
 type ButtonHandler = (target : Button) => void;
 
+class ButtonList {
+    element : HTMLDivElement;
+    btnCurrent : HTMLButtonElement;
+    btnUp : HTMLButtonElement;
+    list : HTMLUListElement;
+    buttons : Button[];
+    lastClicked : Button;
+
+    constructor(name : string) {
+        this.build(name)
+        this.buttons = [];
+    }
+
+    build(name : string) {
+        const div = document.createElement('div');
+        div.className = `button-list ${name}`;
+
+        const combo = document.createElement('div');
+        combo.className = 'button-combo';
+        div.appendChild(combo);
+
+        const btnCurrent = document.createElement('button');
+        btnCurrent.className = 'current';
+        combo.appendChild(btnCurrent);
+        btnCurrent.addEventListener('click', () => {
+            this.lastClicked.handler(this.lastClicked);
+        });
+        this.btnCurrent = btnCurrent;
+
+        const btnUp = document.createElement('button');
+        btnUp.className = 'up';
+        btnUp.appendChild((document.getElementById('template-icon-up') as HTMLTemplateElement).content.cloneNode(true));
+        combo.appendChild(btnUp);
+        this.btnUp = btnUp;
+
+        const ul = document.createElement('ul');
+        div.appendChild(ul);
+        this.list = ul;
+
+        this.element = div;
+    }
+
+    add(button : Button, setLastClicked? : boolean) {
+        const li = document.createElement('li');
+        li.appendChild(button.element);
+        this.list.appendChild(li);
+        this.buttons.push(button);
+
+        const oldHandler = button.handler;
+        button.handler = (tgt : Button) => {
+            this.updateLastClicked(button);
+            oldHandler(button);
+        };
+
+        if (setLastClicked) {
+            this.updateLastClicked(button);
+        }
+
+        return button;
+    }
+
+    updateLastClicked(button : Button) {
+        this.lastClicked = button;
+        this.btnCurrent.innerHTML = button.element.innerHTML;
+    }
+}
+
 class Button {
-    element : HTMLAnchorElement;
+    element : HTMLButtonElement;
     handler : ButtonHandler;
 
     constructor(name : string, text : string, icon? : string, handler? : ButtonHandler) {
@@ -134,23 +212,21 @@ class Button {
     }
 
     build(name : string, text : string, icon : string) {
-        const a = document.createElement('a');
-        a.className = `button button-${name}`;
+        const button = document.createElement('button');
+        button.className = `button-${name}`;
         if (!icon) {
-            a.innerHTML = text;
+            button.innerHTML = text;
         } else {
-            a.title = text;
-            a.appendChild((document.getElementById(icon) as HTMLTemplateElement).content.cloneNode(true));
-            a.classList.add('icon');
+            button.title = text;
+            button.appendChild((document.getElementById(icon) as HTMLTemplateElement).content.cloneNode(true));
+            button.classList.add('icon');
         }
-        a.addEventListener('click', (event : MouseEvent) => {
-            event.stopPropagation();
+        button.addEventListener('click', (event : MouseEvent) => {
             if (this.handler) {
                 this.handler(this);
             }
-            return false;
         });
-        this.element = a;
+        this.element = button;
     }
 
     toggleEnabled(enabled : boolean) {
