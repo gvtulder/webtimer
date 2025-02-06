@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"flag"
+	"fmt"
 	"io/fs"
 	"log"
 	"net"
@@ -10,6 +11,8 @@ import (
 	"strings"
 	"webtimer/server/server"
 )
+
+var Version = "UNDEFINED"
 
 var addr string
 var frontendPath string
@@ -57,7 +60,17 @@ func listAddresses(logger *log.Logger) []net.IP {
 }
 
 func main() {
-	logger := log.New(os.Stdout, "", log.LstdFlags)
+	logger := log.New(os.Stdout, "", 0)
+
+	logger.Printf("\n"+
+		"  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"+
+		"  ┃                                                               ┃\n"+
+		"  ┃   webtimer.cc                                                 ┃\n"+
+		"  ┃                                                               ┃\n"+
+		"  ┃   version %-40s            ┃\n"+
+		"  ┃                                                               ┃\n"+
+		"  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩\n"+
+		"", Version)
 
 	frontend, err := fs.Sub(embedFrontend, "dist/frontend")
 	if err != nil {
@@ -71,13 +84,21 @@ func main() {
 	parts := strings.Split(addr, ":")
 	if len(parts) == 1 {
 		log.Fatal("Invalid listening address.")
-	} else if len(parts) == 2 && parts[0] == "" {
-		for _, a := range listAddresses(logger) {
-			logger.Printf("Running at http://%s:%s/", a, parts[len(parts)-1])
-		}
-	} else {
-		logger.Printf("Running at http://%s/", addr)
 	}
 
+	logger.Printf("  │                                                               │\n")
+	logger.Printf("  │   Listening at:                                               │\n")
+	logger.Printf("  │                                                               │\n")
+	if len(parts) == 2 && parts[0] == "" {
+		for _, a := range listAddresses(logger) {
+			logger.Printf("  │   %-55s     │\n", fmt.Sprintf("http://%s:%s/", a, parts[len(parts)-1]))
+		}
+	} else {
+		logger.Printf("  │   %-55s     │\n", fmt.Sprintf("http://%s/", addr))
+	}
+	logger.Printf("  │                                                               │\n" +
+		"  └───────────────────────────────────────────────────────────────┘\n\n")
+
+	logger.SetFlags(log.LstdFlags)
 	server.RunServer(addr, frontend, logger)
 }
