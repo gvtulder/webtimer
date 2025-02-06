@@ -123,6 +123,7 @@ class TimeDisplay {
         this.build();
 
         window.addEventListener('resize', () => { this.updateTextFit(); });
+        new ResizeObserver(() => { this.updateTextFit(); }).observe(this.element);
     }
 
     build() {
