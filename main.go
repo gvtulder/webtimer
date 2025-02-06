@@ -26,9 +26,11 @@ func init() {
 }
 
 func main() {
+	logger := log.New(os.Stdout, "", log.LstdFlags)
+
 	frontend, err := fs.Sub(embedFrontend, "dist/frontend")
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	if frontendPath != "" {
@@ -38,7 +40,7 @@ func main() {
 	timer := model.NewTimer()
 	watch := model.NewTimerWatch(timer)
 
-	log.Println("Running at " + addr)
+	logger.Println("Running at " + addr)
 	watch.Start()
-	server.RunServer(addr, frontend, watch, timer)
+	server.RunServer(addr, frontend, watch, timer, logger)
 }

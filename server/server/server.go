@@ -14,13 +14,12 @@ func addCacheHeaders(next http.Handler) http.Handler {
 	})
 }
 
-func RunServer(addr string, frontend fs.FS, watch *model.TimerWatch, timer *model.Timer) {
-	log.SetFlags(0)
+func RunServer(addr string, frontend fs.FS, watch *model.TimerWatch, timer *model.Timer, logger *log.Logger) {
 	hub := newHub()
-	go hub.run(watch, timer)
+	go hub.run(watch, timer, logger)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, w, r)
 	})
 	http.Handle("/", addCacheHeaders(http.FileServerFS(frontend)))
-	log.Fatal(http.ListenAndServe(addr, nil))
+	logger.Fatal(http.ListenAndServe(addr, nil))
 }

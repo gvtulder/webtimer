@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"webtimer/server/model"
 )
 
@@ -36,7 +37,7 @@ func newHub() *Hub {
 	}
 }
 
-func (h *Hub) run(watch *model.TimerWatch, timer *model.Timer) {
+func (h *Hub) run(watch *model.TimerWatch, timer *model.Timer, logger *log.Logger) {
 	go func() {
 		for s := range watch.C {
 			h.broadcast <- TimerStateMessage{
@@ -54,6 +55,7 @@ func (h *Hub) run(watch *model.TimerWatch, timer *model.Timer) {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
+			logger.Printf("New connection: %s\n", client.conn.RemoteAddr())
 			s := timer.State()
 			client.send <- TimerStateMessage{
 				Active:           s.Active,
@@ -66,6 +68,7 @@ func (h *Hub) run(watch *model.TimerWatch, timer *model.Timer) {
 
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
+				logger.Printf("Closing connection: %s\n", client.conn.RemoteAddr())
 				delete(h.clients, client)
 				close(client.send)
 			}
