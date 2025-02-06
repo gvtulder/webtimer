@@ -32,16 +32,19 @@ var Version = "UNDEFINED"
 
 var addr string
 var frontendPath string
+var showLicense bool
 
 //go:embed dist/frontend/index.html
 //go:embed dist/frontend/style.css
 //go:embed dist/frontend/main.js
 //go:embed dist/frontend/inter.woff2
+//go:embed html/all-licenses.txt
 var embedFrontend embed.FS
 
 func init() {
 	flag.StringVar(&addr, "addr", ":8000", "http service address")
 	flag.StringVar(&frontendPath, "web", "", "frontend resources path")
+	flag.BoolVar(&showLicense, "license", false, "show license information")
 	flag.Parse()
 }
 
@@ -87,6 +90,16 @@ func main() {
 		"  ┃                                                               ┃\n"+
 		"  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩\n"+
 		"", Version)
+
+	if showLicense {
+		txt, err := embedFrontend.ReadFile("html/all-licenses.txt")
+		if err != nil {
+			logger.Fatal(err)
+		}
+		logger.Println()
+		logger.Print(string(txt))
+		return
+	}
 
 	frontend, err := fs.Sub(embedFrontend, "dist/frontend")
 	if err != nil {
