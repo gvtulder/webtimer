@@ -4,7 +4,11 @@ import { ControlsDisplay } from "./ui/ControlsDisplay.js";
 import { SplashDisplay } from "./ui/SplashDisplay.js";
 import { Router, WsUrlFunction } from "./ui/Router.js";
 
+declare var VERSION : string;
+
 export function startApp(basePath : string, wsUrl : WsUrlFunction) {
+    console.log(`Running webtimer.cc client version ${VERSION}`);
+
     const controller = new TimerControllerWebsocket();
 
     const router = new Router(basePath, wsUrl);

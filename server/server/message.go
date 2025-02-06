@@ -6,6 +6,10 @@ import (
 
 //go:generate msgp
 
+type VersionMessage struct {
+	Version string `msg:"version"`
+}
+
 type TimerStateMessage struct {
 	Key              string `msg:"K"`
 	Active           bool   `msg:"a"`
@@ -20,6 +24,18 @@ type Command struct {
 	Key     string
 	Command string `msg:"cmd"`
 	Seconds int64  `msg:"sec"`
+}
+
+func (m *VersionMessage) prepareWebsocketMessage() (*websocket.PreparedMessage, error) {
+	b, err := m.MarshalMsg(nil)
+	if err != nil {
+		return nil, err
+	}
+	p, err := websocket.NewPreparedMessage(websocket.BinaryMessage, b)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 func (m *TimerStateMessage) prepareWebsocketMessage() (*websocket.PreparedMessage, error) {

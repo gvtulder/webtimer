@@ -1,4 +1,4 @@
-VERSION = $(shell git describe --dirty)
+VERSION = $(shell git describe --always --dirty)
 LDFLAGS = -ldflags="-s -w -X main.Version=$(VERSION)"
 
 all: fe

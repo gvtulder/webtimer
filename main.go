@@ -100,5 +100,5 @@ func main() {
 		"  └───────────────────────────────────────────────────────────────┘\n\n")
 
 	logger.SetFlags(log.LstdFlags)
-	server.RunServer(addr, frontend, logger)
+	server.RunServer(addr, frontend, logger, Version)
 }

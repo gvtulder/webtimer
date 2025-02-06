@@ -31,7 +31,9 @@ export class TimerControllerWebsocket implements TimerController {
             } else if (ev.data instanceof ArrayBuffer) {
                 msg = await decoder.decodeAsync((ev.data as any).stream());
             }
-            if (msg !== null) {
+            if (msg !== null && msg.version) {
+                console.log(`Connected to webtimer.cc server ${url} (version ${msg.version})`)
+            } else if (msg !== null) {
                 this.triggerEvent({
                     type: TimerEventType.UpdateRemainingSeconds,
                     connected: true,

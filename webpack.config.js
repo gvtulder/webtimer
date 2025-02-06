@@ -1,8 +1,14 @@
 import path from 'path';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import child_process from 'child_process';
+import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 
 const __dirname = import.meta.dirname;
+
+function git(command) {
+  return child_process.execSync(`git ${command}`, { encoding: 'utf8' }).trim();
+}
 
 export default {
   mode: 'production',
@@ -54,6 +60,9 @@ export default {
     library: 'webtimer',
   },
   plugins: [
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(git('describe --always --dirty')),
+    }),
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),

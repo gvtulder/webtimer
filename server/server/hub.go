@@ -4,6 +4,8 @@ import (
 	"log"
 	"time"
 	"webtimer/server/model"
+
+	"github.com/gorilla/websocket"
 )
 
 // check for stale sessions every n seconds
@@ -63,25 +65,33 @@ func (s *Session) stop() {
 }
 
 type Hub struct {
-	logger     *log.Logger
-	broadcast  chan TimerStateMessage
-	commands   chan Command
-	sessions   map[string]*Session
-	clients    map[*Client]struct{}
-	register   chan *Client
-	unregister chan *Client
-	cleanup    *time.Ticker
+	logger         *log.Logger
+	broadcast      chan TimerStateMessage
+	commands       chan Command
+	sessions       map[string]*Session
+	clients        map[*Client]struct{}
+	register       chan *Client
+	unregister     chan *Client
+	cleanup        *time.Ticker
+	welcomeMessage *websocket.PreparedMessage
 }
 
-func newHub(logger *log.Logger) *Hub {
+func newHub(logger *log.Logger, version string) *Hub {
+	welcomeMessage := VersionMessage{Version: version}
+	p, err := welcomeMessage.prepareWebsocketMessage()
+	if err != nil {
+		logger.Fatalf("Error preparing welcome message: %v", err)
+	}
+
 	return &Hub{
-		logger:     logger,
-		broadcast:  make(chan TimerStateMessage),
-		commands:   make(chan Command),
-		sessions:   make(map[string]*Session),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		clients:    make(map[*Client]struct{}),
+		logger:         logger,
+		broadcast:      make(chan TimerStateMessage),
+		commands:       make(chan Command),
+		sessions:       make(map[string]*Session),
+		register:       make(chan *Client),
+		unregister:     make(chan *Client),
+		clients:        make(map[*Client]struct{}),
+		welcomeMessage: p,
 	}
 }
 
@@ -137,6 +147,7 @@ func (h *Hub) run() {
 			session := h.getSession(client.key)
 			session.clients[client] = struct{}{}
 			h.logger.Printf("New connection [%s]: %s (client %d)\n", client.key, client.conn.RemoteAddr(), len(session.clients))
+			client.send <- h.welcomeMessage
 			h.sendUpdate(session)
 
 		case client := <-h.unregister:
