@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"flag"
-	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -39,7 +38,7 @@ func main() {
 	timer := model.NewTimer()
 	watch := model.NewTimerWatch(timer)
 
-	fmt.Println("Running at " + addr)
+	log.Println("Running at " + addr)
 	watch.Start()
 	server.RunServer(addr, frontend, watch, timer)
 }
