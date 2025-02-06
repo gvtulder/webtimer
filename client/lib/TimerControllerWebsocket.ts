@@ -1,4 +1,9 @@
+import { Encoder, Decoder, decode } from "@msgpack/msgpack";
+
 import { TimerController, TimerEvent, TimerEventListener, TimerEventType } from "./TimerController.js";
+
+const encoder = new Encoder();
+const decoder = new Decoder();
 
 export class TimerControllerWebsocket implements TimerController {
     private url : string;
@@ -19,20 +24,23 @@ export class TimerControllerWebsocket implements TimerController {
             this.ws.close();
             this.connect(url);
         }
-        this.ws.addEventListener('message', (ev) => {
-            if (ev.data == "") {
-                // ping
-            } else {
-                const msg = JSON.parse(ev.data)
+        this.ws.addEventListener('message', async (ev : MessageEvent) => {
+            let msg = null;
+            if (ev.data instanceof Blob) {
+                msg = decoder.decode(await (ev.data as Blob).arrayBuffer());
+            } else if (ev.data instanceof ArrayBuffer) {
+                msg = await decoder.decodeAsync((ev.data as any).stream());
+            }
+            if (msg !== null) {
                 this.triggerEvent({
                     type: TimerEventType.UpdateRemainingSeconds,
                     connected: true,
-                    active: msg.active,
-                    black: msg.black,
-                    countdown: msg.countdown,
-                    running: msg.running,
-                    remainingSeconds: msg.remaining,
-                    clients: msg.clients,
+                    active: msg.a,
+                    black: msg.b,
+                    countdown: msg.c,
+                    running: msg.r,
+                    remainingSeconds: msg.s,
+                    clients: msg.C,
                 });
             }
             if (this.timeout) {
@@ -61,28 +69,32 @@ export class TimerControllerWebsocket implements TimerController {
         }
     }
 
+    private send(msg : any) {
+        this.ws.send(encoder.encode(msg));
+    }
+
     setRemainingSeconds(seconds : number) {
-        this.ws.send(JSON.stringify({"cmd": "set", "seconds": seconds}));
+        this.send({"cmd": "set", "sec": seconds});
     }
 
     addRemainingSeconds(seconds : number) {
-        this.ws.send(JSON.stringify({"cmd": "add", "seconds": seconds}));
+        this.send({"cmd": "add", "sec": seconds});
     }
 
     startTimer() {
-        this.ws.send(JSON.stringify({"cmd": "start"}));
+        this.send({"cmd": "start"});
     }
 
     pauseTimer() {
-        this.ws.send(JSON.stringify({"cmd": "pause"}));
+        this.send({"cmd": "pause"});
     }
 
     resetTimer() {
-        this.ws.send(JSON.stringify({"cmd": "reset"}));
+        this.send({"cmd": "reset"});
     }
 
     toggleBlack() {
-        this.ws.send(JSON.stringify({"cmd": "toggleblack"}));
+        this.send({"cmd": "toggleblack"});
     }
 
     addListener(listener : TimerEventListener) {

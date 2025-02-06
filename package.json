@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@msgpack/msgpack": "^3.0.0-beta3",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@types/textfit": "^2.4.5",
     "normalize.css": "^8.0.1",

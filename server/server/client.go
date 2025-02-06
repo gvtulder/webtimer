@@ -41,7 +41,7 @@ type Client struct {
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send chan TimerStateMessage
+	send chan *websocket.PreparedMessage
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -58,13 +58,26 @@ func (c *Client) readPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		var command Command
-		err := c.conn.ReadJSON(&command)
+		messageType, msg, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
+		}
+		if messageType != websocket.BinaryMessage {
+			log.Printf("expected binary message, but found %v", messageType)
+			continue
+		}
+		var command Command
+		left, err := command.UnmarshalMsg(msg)
+		if err != nil {
+			log.Printf("error decoding message: %v", err)
+			continue
+		}
+		if len(left) > 0 {
+			log.Println("found leftover bytes decoding message")
+			continue
 		}
 		command.Key = c.key
 		c.hub.commands <- command
@@ -93,8 +106,7 @@ func (c *Client) writePump() {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-
-			err := c.conn.WriteJSON(message)
+			err := c.conn.WritePreparedMessage(message)
 			if err != nil {
 				return
 			}
@@ -121,7 +133,7 @@ func serveWs(hub *Hub, key string, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, key: key, conn: conn, send: make(chan TimerStateMessage, 256)}
+	client := &Client{hub: hub, key: key, conn: conn, send: make(chan *websocket.PreparedMessage, 256)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

@@ -12,22 +12,6 @@ const CLEANUP_INTERVAL = 300
 // remove stale sessions after at least n seconds since the last client left
 const CLEANUP_DELAY = 600
 
-type TimerStateMessage struct {
-	Key              string `json:"key"`
-	Active           bool   `json:"active"`
-	Black            bool   `json:"black"`
-	Running          bool   `json:"running"`
-	Countdown        bool   `json:"countdown"`
-	RemainingSeconds int64  `json:"remaining"`
-	Clients          int    `json:"clients"`
-}
-
-type Command struct {
-	Key     string
-	Command string `json:"cmd"`
-	Seconds int64  `json:"seconds"`
-}
-
 type Session struct {
 	key            string
 	timer          *model.Timer
@@ -125,10 +109,15 @@ func (h *Hub) sendUpdate(session *Session) {
 }
 
 func (h *Hub) sendToClients(msg TimerStateMessage) {
+	p, err := msg.prepareWebsocketMessage()
+	if err != nil {
+		h.logger.Printf("Error preparing message: %v", err)
+		return
+	}
 	session := h.getSession(msg.Key)
 	for client := range session.clients {
 		select {
-		case client.send <- msg:
+		case client.send <- p:
 		default:
 			h.logger.Printf("Closing connection [%s]: %s\n", client.key, client.conn.RemoteAddr())
 			h.getSession(client.key).deleteClient(client)
