@@ -115,6 +115,7 @@ body {
   color: #000;
 }
 
+/*
 .fullscreen .timer-display.countdown.timeout .time span {
   border-top: 0.05em dotted transparent;
   border-bottom: 0.05em dotted #fff;
@@ -126,6 +127,7 @@ body {
     border-bottom: 0.05em dotted #fff;
   }
 }
+*/
 
 .timer-display .connecting {
   display: none;
