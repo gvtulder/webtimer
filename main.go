@@ -5,7 +5,9 @@ import (
 	"flag"
 	"io/fs"
 	"log"
+	"net"
 	"os"
+	"strings"
 	"webtimer/server/model"
 	"webtimer/server/server"
 )
@@ -25,6 +27,36 @@ func init() {
 	flag.Parse()
 }
 
+func listAddresses(logger *log.Logger) []net.IP {
+	var ipAddresses []net.IP
+
+	interfaces, err := net.Interfaces()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, iface := range interfaces {
+		if iface.Flags&net.FlagUp == 0 {
+			continue
+		}
+
+		addrs, err := iface.Addrs()
+		if err != nil {
+			logger.Println("error getting addresses for interface", iface.Name, ":", err)
+			continue
+		}
+
+		for _, addr := range addrs {
+			ip, _, err := net.ParseCIDR(addr.String())
+			if err == nil {
+				ipAddresses = append(ipAddresses, ip)
+			}
+		}
+	}
+
+	return ipAddresses
+}
+
 func main() {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
@@ -40,7 +72,17 @@ func main() {
 	timer := model.NewTimer()
 	watch := model.NewTimerWatch(timer)
 
-	logger.Println("Running at " + addr)
+	parts := strings.Split(addr, ":")
+	if len(parts) == 1 {
+		log.Fatal("Invalid listening address.")
+	} else if len(parts) == 2 && parts[0] == "" {
+		for _, a := range listAddresses(logger) {
+			logger.Printf("Running at http://%s:%s/", a, parts[len(parts)-1])
+		}
+	} else {
+		logger.Printf("Running at http://%s/", addr)
+	}
+
 	watch.Start()
 	server.RunServer(addr, frontend, watch, timer, logger)
 }
