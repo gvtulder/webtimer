@@ -4,6 +4,7 @@ ARG TARGETARCH
 ARG VERSION=UNKNOWN
 WORKDIR /app
 ADD dist/frontend/* /app/dist/frontend/
+ADD html/all-licenses.txt /app/html/
 ADD go.mod /app/
 ADD go.sum /app/
 ADD main.go /app/
