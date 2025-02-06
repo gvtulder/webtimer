@@ -5,12 +5,12 @@ import { SplashDisplay } from "./ui/SplashDisplay.js";
 
 var controller : TimerControllerWebsocket;
 
-export function startApp(wsUrl : string) {
+export function startApp(wsUrl : string, backUrl : string) {
     const controller = new TimerControllerWebsocket(wsUrl);
 
     const container = document.getElementById('container');
 
-    const timerDisplay = new TimerDisplay(controller);
+    const timerDisplay = new TimerDisplay(controller, backUrl);
     container.appendChild(timerDisplay.element);
 
     const controlsDisplay = new ControlsDisplay(controller);
@@ -53,9 +53,9 @@ export function startApp(wsUrl : string) {
     globalThis.timerController = controller;
 }
 
-export function startSplash() {
+export function startSplash(key : string) {
     const container = document.getElementById('container');
-    const splashDisplay = new SplashDisplay();
+    const splashDisplay = new SplashDisplay(key);
     container.appendChild(splashDisplay.element);
     splashDisplay.focus();
 }

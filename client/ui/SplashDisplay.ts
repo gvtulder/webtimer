@@ -3,7 +3,7 @@ export class SplashDisplay {
     element : HTMLDivElement;
     input : HTMLInputElement;
 
-    constructor() {
+    constructor(key : string) {
         const div = document.createElement('div');
         div.className = 'splash-display';
         this.element = div;
@@ -19,6 +19,7 @@ export class SplashDisplay {
         form.action = '';
         input.placeholder = 'Session ID';
         input.type = 'text';
+        input.value = key ? key : '';
         button.value = 'Go';
         button.type = 'submit';
 
@@ -34,6 +35,7 @@ export class SplashDisplay {
             if (v != c) input.value = c;
             button.disabled = c.length < 5;
         }
+        cleanString();
 
         input.addEventListener('keydown', cleanString);
         input.addEventListener('keyup', cleanString);
@@ -54,5 +56,6 @@ export class SplashDisplay {
 
     focus() {
         this.input.focus();
+        this.input.select();
     }
 }

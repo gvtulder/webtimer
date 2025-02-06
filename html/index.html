@@ -8,7 +8,11 @@
   <body>
     <div class="container" id="container"></div>
     <script type="text/javascript">
-      webtimer.startSplash();
+      let key = document.location.hash;
+      if (key && key != '#') {
+        key = key.replace('#', '');
+      }
+      webtimer.startSplash(key);
     </script>
   </body>
 </html>

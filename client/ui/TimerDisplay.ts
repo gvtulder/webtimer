@@ -11,13 +11,13 @@ export class TimerDisplay {
     private timeDisplay : TimeDisplay;
     private connecting : HTMLDivElement;
 
-    constructor(controller : TimerController) {
+    constructor(controller : TimerController, backUrl : string) {
         this.controller = controller;
-        this.build();
+        this.build(backUrl);
         controller.addListener((event: TimerEvent) => { this.handleTimerEvent(event) });
     }
 
-    build() {
+    build(backUrl : string) {
         const div = document.createElement('div');
         div.className = 'timer-display';
         this.element = div;
@@ -53,15 +53,29 @@ export class TimerDisplay {
         });
 
         // menu buttons
-        const menu = document.createElement('div');
-        menu.className = 'menu';
-        div.appendChild(menu);
+        const menuLeft = document.createElement('div');
+        menuLeft.className = 'menu left';
+        div.appendChild(menuLeft);
+
+        const menuRight = document.createElement('div');
+        menuRight.className = 'menu right';
+        div.appendChild(menuRight);
+
+        // show exit
+        const exit = document.createElement('a');
+        exit.className = 'exit-timer';
+        exit.href = backUrl;
+        exit.appendChild((document.getElementById('template-icon-exit') as HTMLTemplateElement).content.cloneNode(true));
+        menuLeft.appendChild(exit);
+        exit.addEventListener('click', (evt) => {
+            evt.stopPropagation();
+        });
 
         // show qr code
         const qrShow = document.createElement('a');
         qrShow.className = 'qr-show';
         qrShow.appendChild((document.getElementById('template-icon-qr') as HTMLTemplateElement).content.cloneNode(true));
-        menu.appendChild(qrShow);
+        menuRight.appendChild(qrShow);
         qrShow.addEventListener('click', (evt) => {
             qr.classList.toggle('visible');
             evt.stopPropagation();
@@ -73,7 +87,7 @@ export class TimerDisplay {
         const fullScreen = document.createElement('a');
         fullScreen.className = 'show-fullscreen';
         fullScreen.appendChild((document.getElementById('template-icon-expand') as HTMLTemplateElement).content.cloneNode(true));
-        menu.appendChild(fullScreen);
+        menuRight.appendChild(fullScreen);
         fullScreen.addEventListener('click', (evt) => {
             qr.classList.remove('visible');
             evt.preventDefault();
