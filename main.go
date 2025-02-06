@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 	"strings"
-	"webtimer/server/model"
 	"webtimer/server/server"
 )
 
@@ -16,6 +15,7 @@ var addr string
 var frontendPath string
 
 //go:embed dist/frontend/index.html
+//go:embed dist/frontend/timer.html
 //go:embed dist/frontend/style.css
 //go:embed dist/frontend/main.js
 //go:embed dist/frontend/inter.woff2
@@ -69,9 +69,6 @@ func main() {
 		frontend = os.DirFS(frontendPath)
 	}
 
-	timer := model.NewTimer()
-	watch := model.NewTimerWatch(timer)
-
 	parts := strings.Split(addr, ":")
 	if len(parts) == 1 {
 		log.Fatal("Invalid listening address.")
@@ -83,6 +80,5 @@ func main() {
 		logger.Printf("Running at http://%s/", addr)
 	}
 
-	watch.Start()
-	server.RunServer(addr, frontend, watch, timer, logger)
+	server.RunServer(addr, frontend, logger)
 }

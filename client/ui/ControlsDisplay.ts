@@ -1,5 +1,3 @@
-import QRious from "qrious";
-
 import { TimerController, TimerEvent, TimerEventType } from "../lib/TimerController.js";
 
 export class ControlsDisplay {
@@ -22,6 +20,10 @@ export class ControlsDisplay {
         const div = document.createElement('div');
         div.className = 'controls-display';
         this.element = div;
+
+        const ternary = document.createElement('div');
+        ternary.className = 'controls ternary';
+        div.appendChild(ternary);
 
         const secondary = document.createElement('div');
         secondary.className = 'controls secondary';

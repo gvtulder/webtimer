@@ -28,6 +28,7 @@ func (w *TimerWatch) Start() {
 				case <-w.timer.C:
 					w.HandleUpdate(w.timer.State())
 				case <-w.done:
+					w.ticker.Stop()
 					return
 				}
 			}
@@ -44,7 +45,7 @@ func (w *TimerWatch) HandleUpdate(s TimerState) {
 
 func (w *TimerWatch) Stop() {
 	if w.ticker != nil {
-		w.done <- false
 		w.ticker.Stop()
+		w.done <- true
 	}
 }

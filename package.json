@@ -3,6 +3,7 @@
     "@rollup/plugin-commonjs": "^28.0.2",
     "@types/textfit": "^2.4.5",
     "npm-check-updates": "^17.1.12",
+    "qr-svg": "^1.1.0",
     "rollup": "^4.29.0",
     "textfit": "^2.4.0",
     "typescript": "^5.7.2"

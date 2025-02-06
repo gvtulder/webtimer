@@ -1,4 +1,5 @@
 import textFit from "textfit";
+import { QR } from "qr-svg";
 
 import { formatTime } from "../lib/format.js";
 import { TimerEvent, TimerEventType, TimerController } from "../lib/TimerController.js";
@@ -35,6 +36,48 @@ export class TimerDisplay {
         connecting.className = 'connecting';
         div.appendChild(connecting);
         this.connecting = connecting;
+
+        // qr link
+        const qr = document.createElement('div');
+        qr.className = 'qr';
+        qr.innerHTML = QR(window.location.href, 'M');
+        const qrp = document.createElement('p');
+        qrp.innerHTML = window.location.href;
+        qr.appendChild(qrp);
+        div.appendChild(qr);
+        qr.addEventListener('click', (evt) => {
+            qr.classList.remove('visible');
+            evt.stopPropagation();
+            evt.preventDefault();
+            return false;
+        });
+
+        // menu buttons
+        const menu = document.createElement('div');
+        menu.className = 'menu';
+        div.appendChild(menu);
+
+        // show qr code
+        const qrShow = document.createElement('a');
+        qrShow.className = 'qr-show';
+        qrShow.appendChild((document.getElementById('template-icon-qr') as HTMLTemplateElement).content.cloneNode(true));
+        menu.appendChild(qrShow);
+        qrShow.addEventListener('click', (evt) => {
+            qr.classList.toggle('visible');
+            evt.stopPropagation();
+            evt.preventDefault();
+            return false;
+        });
+
+        // show full screen
+        const fullScreen = document.createElement('a');
+        fullScreen.className = 'show-fullscreen';
+        fullScreen.appendChild((document.getElementById('template-icon-expand') as HTMLTemplateElement).content.cloneNode(true));
+        menu.appendChild(fullScreen);
+        fullScreen.addEventListener('click', (evt) => {
+            qr.classList.remove('visible');
+            evt.preventDefault();
+        });
     }
 
     showTime(seconds : number) {

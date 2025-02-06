@@ -1,6 +1,7 @@
 import { TimerDisplay } from "./ui/TimerDisplay.js";
 import { TimerControllerWebsocket } from "./lib/TimerControllerWebsocket.js";
 import { ControlsDisplay } from "./ui/ControlsDisplay.js";
+import { SplashDisplay } from "./ui/SplashDisplay.js";
 
 var controller : TimerControllerWebsocket;
 
@@ -50,4 +51,11 @@ export function startApp(wsUrl : string) {
     controller.run();
 
     globalThis.timerController = controller;
+}
+
+export function startSplash() {
+    const container = document.getElementById('container');
+    const splashDisplay = new SplashDisplay();
+    container.appendChild(splashDisplay.element);
+    splashDisplay.focus();
 }
