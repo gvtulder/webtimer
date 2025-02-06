@@ -29,6 +29,7 @@ type Command struct {
 }
 
 type Session struct {
+	key            string
 	timer          *model.Timer
 	watch          *model.TimerWatch
 	done           chan bool
@@ -39,7 +40,7 @@ type Session struct {
 func newSession(h *Hub, key string) *Session {
 	timer := model.NewTimer()
 	watch := model.NewTimerWatch(timer)
-	session := &Session{timer: timer, watch: watch, done: make(chan bool), clients: make(map[*Client]bool)}
+	session := &Session{key: key, timer: timer, watch: watch, done: make(chan bool), clients: make(map[*Client]bool)}
 	h.sessions[key] = session
 
 	watch.Start()
@@ -78,6 +79,7 @@ func (s *Session) stop() {
 }
 
 type Hub struct {
+	logger     *log.Logger
 	broadcast  chan TimerStateMessage
 	commands   chan Command
 	sessions   map[string]*Session
@@ -87,8 +89,9 @@ type Hub struct {
 	cleanup    *time.Ticker
 }
 
-func newHub() *Hub {
+func newHub(logger *log.Logger) *Hub {
 	return &Hub{
+		logger:     logger,
 		broadcast:  make(chan TimerStateMessage),
 		commands:   make(chan Command),
 		sessions:   make(map[string]*Session),
@@ -107,7 +110,36 @@ func (h *Hub) getSession(key string) *Session {
 	return session
 }
 
-func (h *Hub) run(logger *log.Logger) {
+func (h *Hub) sendUpdate(session *Session) {
+	s := session.timer.State()
+	msg := TimerStateMessage{
+		Key:              session.key,
+		Active:           s.Active,
+		Black:            s.Black,
+		Countdown:        s.Countdown,
+		Running:          s.Running,
+		RemainingSeconds: s.Remaining,
+		Clients:          len(session.clients),
+	}
+	h.sendToClients(msg)
+}
+
+func (h *Hub) sendToClients(msg TimerStateMessage) {
+	session := h.getSession(msg.Key)
+	for client := range session.clients {
+		select {
+		case client.send <- msg:
+		default:
+			h.logger.Printf("Closing connection [%s]: %s\n", client.key, client.conn.RemoteAddr())
+			h.getSession(client.key).deleteClient(client)
+			delete(h.clients, client)
+			close(client.send)
+			h.sendUpdate(session)
+		}
+	}
+}
+
+func (h *Hub) run() {
 	h.cleanup = time.NewTicker(CLEANUP_INTERVAL * time.Second)
 	for {
 		select {
@@ -115,38 +147,21 @@ func (h *Hub) run(logger *log.Logger) {
 			h.clients[client] = true
 			session := h.getSession(client.key)
 			session.clients[client] = true
-			logger.Printf("New connection [%s]: %s (client %d)\n", client.key, client.conn.RemoteAddr(), len(session.clients))
-			s := session.timer.State()
-			client.send <- TimerStateMessage{
-				Key:              client.key,
-				Active:           s.Active,
-				Black:            s.Black,
-				Countdown:        s.Countdown,
-				Running:          s.Running,
-				RemainingSeconds: s.Remaining,
-				Clients:          len(session.clients),
-			}
+			h.logger.Printf("New connection [%s]: %s (client %d)\n", client.key, client.conn.RemoteAddr(), len(session.clients))
+			h.sendUpdate(session)
 
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
-				logger.Printf("Closing connection [%s]: %s\n", client.key, client.conn.RemoteAddr())
-				h.getSession(client.key).deleteClient(client)
+				h.logger.Printf("Closing connection [%s]: %s\n", client.key, client.conn.RemoteAddr())
+				session := h.getSession(client.key)
+				session.deleteClient(client)
 				delete(h.clients, client)
 				close(client.send)
+				h.sendUpdate(session)
 			}
 
-		case message := <-h.broadcast:
-			session := h.getSession(message.Key)
-			for client := range session.clients {
-				select {
-				case client.send <- message:
-				default:
-					logger.Printf("Closing connection [%s]: %s\n", client.key, client.conn.RemoteAddr())
-					h.getSession(client.key).deleteClient(client)
-					delete(h.clients, client)
-					close(client.send)
-				}
-			}
+		case msg := <-h.broadcast:
+			h.sendToClients(msg)
 
 		case cmd := <-h.commands:
 			timer := h.getSession(cmd.Key).timer
@@ -170,11 +185,11 @@ func (h *Hub) run(logger *log.Logger) {
 			}
 
 		case <-h.cleanup.C:
-			logger.Println("Cleaning time!")
+			h.logger.Println("Cleaning time!")
 			for key, session := range h.sessions {
-				logger.Printf("Session %s: %d clients", key, len(session.clients))
+				h.logger.Printf("Session %s: %d clients", key, len(session.clients))
 				if len(session.clients) == 0 && session.lastDisconnect < time.Now().Unix()-CLEANUP_DELAY {
-					logger.Println("Closing session " + key)
+					h.logger.Println("Closing session " + key)
 					session.stop()
 					delete(h.sessions, key)
 				}

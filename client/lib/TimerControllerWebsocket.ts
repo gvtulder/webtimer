@@ -32,6 +32,7 @@ export class TimerControllerWebsocket implements TimerController {
                     countdown: msg.countdown,
                     running: msg.running,
                     remainingSeconds: msg.remaining,
+                    clients: msg.clients,
                 });
             }
             if (this.timeout) {

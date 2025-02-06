@@ -17,8 +17,8 @@ func addCacheHeaders(next http.Handler) http.Handler {
 }
 
 func RunServer(addr string, frontend fs.FS, logger *log.Logger) {
-	hub := newHub()
-	go hub.run(logger)
+	hub := newHub(logger)
+	go hub.run()
 
 	r := mux.NewRouter()
 	srv := &http.Server{

@@ -10,6 +10,7 @@ export class TimerDisplay {
     private controller : TimerController;
     private timeDisplay : TimeDisplay;
     private connecting : HTMLDivElement;
+    private statusBar : HTMLDivElement;
 
     constructor(controller : TimerController, backUrl : string) {
         this.controller = controller;
@@ -52,14 +53,32 @@ export class TimerDisplay {
             return false;
         });
 
+        // menu
+        const menu = document.createElement('div');
+        menu.className = 'menu';
+        div.appendChild(menu);
+
+        menu.addEventListener('click', (evt) => {
+            if (evt.target && (evt.target as HTMLElement).closest('.show-fullscreen')) {
+                return;
+            }
+            evt.stopPropagation();
+        });
+
         // menu buttons
         const menuLeft = document.createElement('div');
-        menuLeft.className = 'menu left';
-        div.appendChild(menuLeft);
+        menuLeft.className = 'left';
+        menu.appendChild(menuLeft);
+
+        const statusBar = document.createElement('div');
+        statusBar.className = 'status';
+        statusBar.innerHTML = '';
+        menu.appendChild(statusBar);
+        this.statusBar = statusBar;
 
         const menuRight = document.createElement('div');
-        menuRight.className = 'menu right';
-        div.appendChild(menuRight);
+        menuRight.className = 'right';
+        menu.appendChild(menuRight);
 
         // show exit
         const exit = document.createElement('button');
@@ -107,6 +126,15 @@ export class TimerDisplay {
             this.element.classList.toggle('running', event.active && event.running);
             this.element.classList.toggle('timeout', event.active && event.remainingSeconds !== null && event.remainingSeconds <= 0);
             this.element.classList.toggle('warning', event.active && event.remainingSeconds !== null && event.remainingSeconds <= 60 && event.remainingSeconds > 0);
+
+            if (event.clients == 2) {
+                this.statusBar.innerHTML = '+1 connected';
+            } else if (event.clients > 2) {
+                this.statusBar.innerHTML = `+${event.clients - 1} connected`;
+            } else {
+                this.statusBar.innerHTML = '';
+            }
+
             this.connecting.classList.remove('disconnected');
         } else if (event.type == TimerEventType.Connecting) {
             this.connecting.classList.add('disconnected');

@@ -13,6 +13,7 @@ export type TimerEvent = {
     countdown? : boolean,
     running? : boolean,
     remainingSeconds? : number,
+    clients? : number,
  };
 export type TimerEventListener = (event : TimerEvent) => void;
 
