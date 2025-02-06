@@ -1,6 +1,6 @@
 import { TimerDisplay } from "./ui/TimerDisplay";
 import { TimerControllerWebsocket } from "./lib/TimerControllerWebsocket";
-import { ControlsDisplay } from "./ui/ControlsDIsplay";
+import { ControlsDisplay } from "./ui/ControlsDisplay";
 
 export function startApp(wsUrl : string) {
     const controller = new TimerControllerWebsocket(wsUrl);

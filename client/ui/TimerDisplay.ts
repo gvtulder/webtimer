@@ -1,7 +1,7 @@
 import textFit from "textfit";
 
-import { formatTime } from "src/lib/format";
-import { TimerEvent, TimerEventType, TimerController } from "src/lib/TimerController";
+import { formatTime } from "../lib/format";
+import { TimerEvent, TimerEventType, TimerController } from "../lib/TimerController";
 
 export class TimerDisplay {
     element : HTMLDivElement;

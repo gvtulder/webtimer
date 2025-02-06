@@ -4,7 +4,7 @@ import terser from '@rollup/plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 
 export default {
-  input: 'src/main.ts',
+  input: 'client/main.ts',
   output: {
     name: 'webtimer',
     dir: 'dist',

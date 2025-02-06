@@ -1,4 +1,4 @@
-import { TimerController, TimerEvent, TimerEventType } from "src/lib/TimerController";
+import { TimerController, TimerEvent, TimerEventType } from "../lib/TimerController";
 
 export class ControlsDisplay {
     element : HTMLDivElement;
