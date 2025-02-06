@@ -142,6 +142,7 @@ class ButtonList {
     list : HTMLUListElement;
     buttons : Button[];
     lastClicked : Button;
+    lastClickedHandler : ButtonHandler;
 
     constructor(name : string) {
         this.build(name)
@@ -160,7 +161,7 @@ class ButtonList {
         btnCurrent.className = 'current';
         combo.appendChild(btnCurrent);
         btnCurrent.addEventListener('click', () => {
-            this.lastClicked.handler(this.lastClicked);
+            this.lastClickedHandler(this.lastClicked);
         });
         this.btnCurrent = btnCurrent;
 
@@ -185,19 +186,19 @@ class ButtonList {
 
         const oldHandler = button.handler;
         button.handler = (tgt : Button) => {
-            this.updateLastClicked(button);
-            oldHandler(button);
+            this.updateLastClicked(button, oldHandler);
         };
 
         if (setLastClicked) {
-            this.updateLastClicked(button);
+            this.updateLastClicked(button, oldHandler);
         }
 
         return button;
     }
 
-    updateLastClicked(button : Button) {
+    updateLastClicked(button : Button, handler : ButtonHandler) {
         this.lastClicked = button;
+        this.lastClickedHandler = handler;
         this.btnCurrent.innerHTML = button.element.innerHTML;
     }
 }
