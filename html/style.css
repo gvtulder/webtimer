@@ -1,0 +1,282 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-size: 40px;
+  background: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.timer-display {
+  height: 100%;
+  margin: 5vw;
+  background: #000;
+  cursor: pointer;
+  position: relative;
+}
+
+.timer-display .card {
+  background: #000;
+  opacity: 1;
+  transition: opacity 1s;
+  width: 100%;
+  height: 100%;
+}
+
+.fullscreen .timer-display {
+  cursor: none;
+  margin: 0;
+}
+
+.timer-display.black .card {
+  opacity: 0.2;
+}
+
+.fullscreen .timer-display.black .card {
+  opacity: 0;
+}
+
+.timer-display.running .card {
+  transition: opacity 0.5s, background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+}
+
+.timer-display .time {
+  height: 100%;
+  margin: 0 10vw;
+  color: #fff;
+  font-optical-sizing: auto;
+  font-weight: 600;
+}
+
+.timer-display.countdown.warning .card {
+  background: #ffc107;
+}
+.timer-display.countdown.timeout .card {
+  background: #980b19;
+}
+.timer-display.countdown.warning .time {
+  color: #000;
+}
+
+.timer-display .connecting {
+  display: none;
+  background: #17a2b8;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #000;
+  padding: 5px 10px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.timer-display .connecting.disconnected {
+  display: initial;
+}
+
+.controls-display {
+  display: flex;
+  flex-direction: column;
+  margin: 2vh 1vh;
+}
+
+.fullscreen .controls-display {
+  display: none;
+}
+
+.controls.main {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.controls.secondary {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.controls.secondary > .controls {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 375px;
+  align-content: flex-start;
+  justify-content: flex-start;
+}
+
+.controls.secondary > .controls + .controls {
+  justify-content: flex-end;
+}
+
+.button {
+  display: block;
+  color: #000;
+  text-decoration: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  margin: 5px;
+  background: #777;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:active,
+.secondary .button:hover {
+  background: #aaa;
+}
+@media(hover: hover) {
+  .button:hover,
+  .secondary .button:hover{
+    background: #aaa;
+  }
+}
+
+.button.icon {
+  min-width: 60px;
+  height: fit-content;
+}
+
+.button.icon svg {
+  padding: 5px;
+  height: 45px;
+  vertical-align: top;
+}
+
+.main .button {
+  margin: 15px;
+}
+.secondary .button {
+  font-size: 20px;
+  max-height: fit-content;
+  min-width: 70px;
+  border-radius: 10px;
+  background: #555;
+}
+
+.button-pause.icon svg,
+.button-start.icon svg {
+  height: 60px;
+}
+
+.button.disabled {
+  display: none;
+}
+
+.button.on {
+  background: #ddd;
+}
+
+@media screen and (min-width: 541px) and (max-width: 820px) {
+  .secondaryAdd .button:nth-child(1),
+  .secondaryAdd .button:nth-child(4) {
+    display: none;
+  }
+  .controls.secondary > .controls + .controls {
+    max-width: 250px;
+  }
+}
+
+@media screen and (min-width: 541px) and (max-width: 660px) {
+  .secondarySet .button:nth-child(3),
+  .secondarySet .button:nth-child(5) {
+    display: none;
+  }
+  .controls.secondary > .controls {
+    max-width: 250px;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .secondaryAdd .button:nth-child(1),
+  .secondaryAdd .button:nth-child(4),
+  .secondarySet .button:nth-child(3),
+  .secondarySet .button:nth-child(5) {
+    display: none;
+  }
+
+  .secondary .button {
+    padding: 10px 5px;
+  }
+}
+
+@media screen and (max-width: 435px) {
+  .secondaryAdd .button:nth-child(1),
+  .secondaryAdd .button:nth-child(4),
+  .secondarySet .button:nth-child(3),
+  .secondarySet .button:nth-child(5) {
+    display: none;
+  }
+
+  .controls.secondary > .controls + .controls,
+  .controls.secondary > .controls {
+    justify-content: center;
+  }
+
+  .main .button {
+    margin: 5px;
+  }
+
+  .secondary .button {
+    padding: 10px 5px;
+  }
+
+  .button.icon {
+    min-width: 40px;
+  }
+
+  .button.icon svg {
+    padding: 5px;
+    height: 35px;
+  }
+
+  .button-pause.icon,
+  .button-start.icon {
+    min-width: 50px;
+  }
+
+  .button-pause.icon svg,
+  .button-start.icon svg {
+    height: 50px;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .controls.secondary > .controls {
+    max-width: 250px;
+  }
+}
+
+@media screen and (max-width: 315px) {
+  .main .button {
+    margin: 5px;
+  }
+
+  .button.icon {
+    min-width: 30px;
+  }
+
+  .button.icon svg {
+    padding: 0px;
+    height: 30px;
+    vertical-align: initial;
+  }
+}
+

@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@types/textfit": "^2.4.5",
+    "npm-check-updates": "^17.1.12",
+    "rollup": "^4.29.0",
+    "textfit": "^2.4.0",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-strip": "^3.0.4",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-workbox": "^8.1.1",
+    "tslib": "^2.8.1"
+  },
+  "type": "module"
+}
