@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"webtimer/internal/model"
-	"webtimer/internal/server"
+	"webtimer/server/model"
+	"webtimer/server/server"
 )
 
 var addr = flag.String("addr", ":8000", "http service address")

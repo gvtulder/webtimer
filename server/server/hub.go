@@ -1,7 +1,7 @@
 package server
 
 import (
-	"webtimer/internal/model"
+	"webtimer/server/model"
 )
 
 type TimerStateMessage struct {

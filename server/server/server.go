@@ -3,7 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
-	"webtimer/internal/model"
+	"webtimer/server/model"
 )
 
 func RunServer(addr string, watch *model.TimerWatch, timer *model.Timer) {
