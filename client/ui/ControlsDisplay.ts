@@ -89,19 +89,19 @@ export class ControlsDisplay {
         secondary.appendChild(secondarySub.element);
 
         secondarySub.add(new Button(
-            'sub1000', '&ndash;10:00', null,
+            'sub1000', '&minus;10:00', null,
             () => { this.controller.addRemainingSeconds(-600) }
         ));
         secondarySub.add(new Button(
-            'sub500', '&ndash;5:00', null,
+            'sub500', '&minus;5:00', null,
             () => { this.controller.addRemainingSeconds(-300) }
         ));
         secondarySub.add(new Button(
-            'sub100', '&ndash;1:00', null,
+            'sub100', '&minus;1:00', null,
             () => { this.controller.addRemainingSeconds(-60) }
         ), true);
         secondarySub.add(new Button(
-            'sub30', '&ndash;0:30', null,
+            'sub30', '&minus;0:30', null,
             () => { this.controller.addRemainingSeconds(-30) }
         ));
 
