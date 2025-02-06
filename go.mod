@@ -1,4 +1,4 @@
-module webtimer
+module github.com/gvtulder/webtimer
 
 go 1.23.2
 

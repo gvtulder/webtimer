@@ -24,7 +24,8 @@ import (
 	"net"
 	"os"
 	"strings"
-	"webtimer/server/server"
+
+	"github.com/gvtulder/webtimer/server"
 )
 
 var Version = "UNDEFINED"

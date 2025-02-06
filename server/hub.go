@@ -18,7 +18,6 @@ package server
 import (
 	"log"
 	"time"
-	"webtimer/server/model"
 
 	"github.com/gorilla/websocket"
 )
@@ -31,16 +30,16 @@ const CLEANUP_DELAY = 600
 
 type Session struct {
 	key            string
-	timer          *model.Timer
-	watch          *model.TimerWatch
+	timer          *Timer
+	watch          *TimerWatch
 	done           chan struct{}
 	clients        map[*Client]struct{}
 	lastDisconnect int64
 }
 
 func newSession(h *Hub, key string) *Session {
-	timer := model.NewTimer()
-	watch := model.NewTimerWatch(timer)
+	timer := NewTimer()
+	watch := NewTimerWatch(timer)
 	session := &Session{key: key, timer: timer, watch: watch, done: make(chan struct{}), clients: make(map[*Client]struct{})}
 	h.sessions[key] = session
 
