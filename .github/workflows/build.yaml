@@ -71,6 +71,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get version string
+        id: get-version-string
+        run: |
+          git fetch --tags --force
+          version="$(git describe --dirty)"
+          echo "Version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -110,3 +118,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.get-version-string.outputs.version }}
