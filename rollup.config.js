@@ -30,7 +30,7 @@ export default {
     }),
     commonjs(),
     nodeResolve(),
-    ...debug ? [ terser() ] : [],
+    ...debug ? [] : [ terser() ],
     concat({
       groupedFiles: [
         {
@@ -46,13 +46,13 @@ export default {
       targets: [
         { src: 'html/index.html', dest: 'dist/frontend' },
         { src: 'html/inter.woff2', dest: 'dist/frontend' },
-        ...debug ? [
+        ...debug ? [] : [
           {
             src: 'dist/frontend/style.css',
             dest: 'dist/frontend',
             transform: (contents) => new CleanCSS().minify(contents).styles,
           },
-        ] : [],
+        ],
       ]
     }),
   ],
