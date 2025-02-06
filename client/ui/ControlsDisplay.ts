@@ -202,6 +202,7 @@ class ButtonList {
         const oldHandler = button.handler;
         button.handler = (tgt : Button) => {
             this.updateLastClicked(button, oldHandler);
+            oldHandler(tgt);
         };
 
         if (setLastClicked) {
