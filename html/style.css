@@ -111,6 +111,18 @@ body {
   color: #000;
 }
 
+.fullscreen .timer-display.countdown.timeout .time span {
+  border-top: 0.05em dotted transparent;
+  border-bottom: 0.05em dotted #fff;
+}
+
+@media screen and (orientation: portrait) {
+  .timer-display.countdown.timeout .time span {
+    border-top: 0.05em dotted transparent;
+    border-bottom: 0.05em dotted #fff;
+  }
+}
+
 .timer-display .connecting {
   display: none;
   background: #17a2b8;
