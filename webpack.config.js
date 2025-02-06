@@ -3,6 +3,7 @@ import child_process from 'child_process';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import LicensePlugin from 'webpack-license-plugin';
 
 const __dirname = import.meta.dirname;
 
@@ -66,5 +67,6 @@ export default {
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
+    new LicensePlugin(),
   ],
 };
