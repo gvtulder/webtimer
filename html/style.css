@@ -251,6 +251,29 @@ body {
   display: block;
 }
 
+@media screen and (min-width: 800px) {
+  .controls button {
+    font-size: 24px;
+  }
+
+  .button-list {
+    height: 50px;
+  }
+
+  .button-list button {
+    width: 150px;
+    height: 50px;
+  }
+
+  .button-list button.up {
+    width: 59px;
+  }
+
+  .button-list ul {
+    bottom: 55px;
+  }
+}
+
 .controls.main button {
   margin: 0 10px;
   flex-shrink: 0;
