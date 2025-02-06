@@ -3,22 +3,30 @@ import { QR } from "qr-svg";
 
 import { formatTime } from "../lib/format.js";
 import { TimerEvent, TimerEventType, TimerController } from "../lib/TimerController.js";
+import { Router } from "./Router.js";
 
 export class TimerDisplay {
     element : HTMLDivElement;
 
     private controller : TimerController;
+    private router : Router;
     private timeDisplay : TimeDisplay;
     private connecting : HTMLDivElement;
     private statusBar : HTMLDivElement;
+    private qrContainer : HTMLDivElement;
 
-    constructor(controller : TimerController, backUrl : string) {
+    constructor(controller : TimerController, router : Router) {
         this.controller = controller;
-        this.build(backUrl);
+        this.router = router;
+        this.build();
         controller.addListener((event: TimerEvent) => { this.handleTimerEvent(event) });
     }
 
-    build(backUrl : string) {
+    activate() {
+        this.renderQR();
+    }
+
+    build() {
         const div = document.createElement('div');
         div.className = 'timer-display';
         this.element = div;
@@ -41,10 +49,7 @@ export class TimerDisplay {
         // qr link
         const qr = document.createElement('div');
         qr.className = 'qr';
-        qr.innerHTML = QR(window.location.href, 'M');
-        const qrp = document.createElement('p');
-        qrp.innerHTML = window.location.href;
-        qr.appendChild(qrp);
+        this.qrContainer = qr;
         div.appendChild(qr);
         qr.addEventListener('click', (evt) => {
             qr.classList.remove('visible');
@@ -86,7 +91,7 @@ export class TimerDisplay {
         exit.appendChild((document.getElementById('template-icon-exit') as HTMLTemplateElement).content.cloneNode(true));
         menuLeft.appendChild(exit);
         exit.addEventListener('click', (evt) => {
-            window.location.href = backUrl;
+            this.router.navigateToSplash();
             evt.stopPropagation();
         });
 
@@ -111,6 +116,14 @@ export class TimerDisplay {
             qr.classList.remove('visible');
             evt.preventDefault();
         });
+    }
+
+    renderQR() {
+        const div = this.qrContainer;
+        div.innerHTML = QR(window.location.href, 'M');
+        const qrp = document.createElement('p');
+        qrp.textContent = window.location.href;
+        div.appendChild(qrp);
     }
 
     showTime(seconds : number) {
@@ -169,6 +182,9 @@ class TimeDisplay {
     }
 
     updateTextFit() {
-        textFit(this.element, { alignVert: true, alignHoriz: true, detectMultiLine: false, maxFontSize: 10000 });
+        try {
+            textFit(this.element, { alignVert: true, alignHoriz: true, detectMultiLine: false, maxFontSize: 10000 });
+        } catch {
+        }
     }
 }

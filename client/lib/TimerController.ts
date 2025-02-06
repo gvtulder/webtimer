@@ -18,6 +18,8 @@ export type TimerEvent = {
 export type TimerEventListener = (event : TimerEvent) => void;
 
 export interface TimerController {
+    connect(url : string) : void;
+    disconnect() : void;
     setRemainingSeconds(seconds : number) : void;
     addRemainingSeconds(seconds : number) : void;
     startTimer() : void;

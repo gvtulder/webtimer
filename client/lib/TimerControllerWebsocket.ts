@@ -8,16 +8,16 @@ export class TimerControllerWebsocket implements TimerController {
     private listeners : TimerEventListener[];
     private lastEvent : TimerEvent;
 
-    constructor(url : string) {
-        this.url = url;
+    constructor() {
         this.listeners = [];
     }
 
-    run() {
+    connect(url : string) {
+        this.url = url;
         this.ws = new WebSocket(this.url);
         let reconnect = () => {
             this.ws.close();
-            this.run();
+            this.connect(url);
         }
         this.ws.addEventListener('message', (ev) => {
             if (ev.data == "") {
@@ -48,6 +48,17 @@ export class TimerControllerWebsocket implements TimerController {
             type: TimerEventType.Connecting,
             connected: false,
         });
+    }
+
+    disconnect(): void {
+        this.url = null;
+        if (this.timeout) {
+            window.clearTimeout(this.timeout);
+        }
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
     }
 
     setRemainingSeconds(seconds : number) {

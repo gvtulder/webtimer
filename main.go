@@ -15,7 +15,6 @@ var addr string
 var frontendPath string
 
 //go:embed dist/frontend/index.html
-//go:embed dist/frontend/timer.html
 //go:embed dist/frontend/style.css
 //go:embed dist/frontend/main.js
 //go:embed dist/frontend/inter.woff2

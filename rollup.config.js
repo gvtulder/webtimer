@@ -5,7 +5,6 @@ import CleanCSS from 'clean-css';
 import commonjs from '@rollup/plugin-commonjs';
 import concat from 'rollup-plugin-concat';
 import copy from 'rollup-plugin-copy';
-import rm from 'rollup-plugin-rm';
 
 const debug = process.env.DEBUG;
 
@@ -46,7 +45,6 @@ export default {
     copy({
       targets: [
         { src: 'html/index.html', dest: 'dist/frontend' },
-        { src: 'html/timer.html', dest: 'dist/frontend' },
         { src: 'html/inter.woff2', dest: 'dist/frontend' },
         ...debug ? [
           {

@@ -2,19 +2,22 @@ import { TimerDisplay } from "./ui/TimerDisplay.js";
 import { TimerControllerWebsocket } from "./lib/TimerControllerWebsocket.js";
 import { ControlsDisplay } from "./ui/ControlsDisplay.js";
 import { SplashDisplay } from "./ui/SplashDisplay.js";
+import { Router, WsUrlFunction } from "./ui/Router.js";
 
-var controller : TimerControllerWebsocket;
+export function startApp(basePath : string, wsUrl : WsUrlFunction) {
+    const controller = new TimerControllerWebsocket();
 
-export function startApp(wsUrl : string, backUrl : string) {
-    const controller = new TimerControllerWebsocket(wsUrl);
+    const router = new Router(basePath, wsUrl);
 
     const container = document.getElementById('container');
 
-    const timerDisplay = new TimerDisplay(controller, backUrl);
+    const timerDisplay = new TimerDisplay(controller, router);
     container.appendChild(timerDisplay.element);
 
     const controlsDisplay = new ControlsDisplay(controller);
     container.appendChild(controlsDisplay.element);
+
+    const splashDisplay = new SplashDisplay(router);
 
     let wakeLock = null;
 
@@ -48,12 +51,9 @@ export function startApp(wsUrl : string, backUrl : string) {
         }
     });
 
-    controller.run();
+
+    router.run(basePath, controller, timerDisplay, splashDisplay);
 
     globalThis.timerController = controller;
-}
-
-export function startSplash(key : string) {
-    const splashDisplay = new SplashDisplay(key);
-    splashDisplay.focus();
+    globalThis.router = router;
 }

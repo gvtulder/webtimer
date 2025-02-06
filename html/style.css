@@ -30,6 +30,17 @@ body {
 }
 
 
+/******************************
+ * Show/hide panels based on state.
+ */
+.show-splash .timer-display,
+.show-splash .controls-display {
+  display: none;
+}
+
+.show-timer .splash-display {
+  display: none;
+}
 
 
 /******************************

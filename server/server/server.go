@@ -38,7 +38,7 @@ func RunServer(addr string, frontend fs.FS, logger *log.Logger) {
 	r.StrictSlash(true)
 	r.Handle("/", addCacheHeaders(serveFile("index.html")))
 	r.PathPrefix("/static/").Handler(addCacheHeaders(http.StripPrefix("/static/", http.FileServerFS(frontend))))
-	r.Handle("/{key:[-a-zA-Z0-9]+}/", addCacheHeaders(serveFile("timer.html")))
+	r.Handle("/{key:[-a-zA-Z0-9]+}/", addCacheHeaders(serveFile("index.html")))
 	r.Handle("/{key:[-a-zA-Z0-9]+}/ws", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		serveWs(hub, mux.Vars(r)["key"], w, r)
 	}))
