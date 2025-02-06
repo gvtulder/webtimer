@@ -136,7 +136,7 @@ class Button {
             a.innerHTML = text;
         } else {
             a.title = text;
-            a.appendChild(document.getElementById(icon).content.cloneNode(true));
+            a.appendChild((document.getElementById(icon) as HTMLTemplateElement).content.cloneNode(true));
             a.classList.add('icon');
         }
         a.addEventListener('click', (event : MouseEvent) => {
