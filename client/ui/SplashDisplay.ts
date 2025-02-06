@@ -1,33 +1,15 @@
 
 export class SplashDisplay {
-    element : HTMLDivElement;
     input : HTMLInputElement;
 
     constructor(key : string) {
-        const div = document.createElement('div');
-        div.className = 'splash-display';
-        this.element = div;
+        const input = document.querySelector('input.key') as HTMLInputElement;
+        const form = input.closest('form') as HTMLFormElement;
+        const button = form.querySelector('input[type="submit"]') as HTMLInputElement;
 
-        const form = document.createElement('form');
-        const p1 = document.createElement('p');
-        const p2 = document.createElement('p');
-        const input = document.createElement('input');
-        const button = document.createElement('input');
-
-        p1.innerHTML = 'Enter the ID to join a running timer,<br/>or choose a new ID to start one.';
-
-        form.action = '';
-        input.placeholder = 'Session ID';
-        input.type = 'text';
-        input.value = key ? key : '';
-        button.value = 'Go';
-        button.type = 'submit';
-
-        form.appendChild(p1);
-        p2.appendChild(input);
-        p2.appendChild(button);
-        form.appendChild(p2);
-        div.appendChild(form);
+        if (key) {
+            input.value = key;
+        }
 
         function cleanString() {
             const v = input.value;

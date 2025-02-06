@@ -54,8 +54,6 @@ export function startApp(wsUrl : string, backUrl : string) {
 }
 
 export function startSplash(key : string) {
-    const container = document.getElementById('container');
     const splashDisplay = new SplashDisplay(key);
-    container.appendChild(splashDisplay.element);
     splashDisplay.focus();
 }
