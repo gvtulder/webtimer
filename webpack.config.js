@@ -37,7 +37,8 @@ export default {
     extensions: ['.tsx', '.ts', '.js'],
     extensionAlias: {
       '.js': ['.ts', '.js'],
-    }
+    },
+    modules: ['node_modules'],
   },
   optimization: {
     minimizer: [
