@@ -53,7 +53,4 @@ export function startApp(basePath : string, wsUrl : WsUrlFunction) {
 
 
     router.run(basePath, controller, timerDisplay, splashDisplay);
-
-    globalThis.timerController = controller;
-    globalThis.router = router;
 }
