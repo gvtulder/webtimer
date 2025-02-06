@@ -3,7 +3,11 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import CleanCSS from 'clean-css';
 import commonjs from '@rollup/plugin-commonjs';
+import concat from 'rollup-plugin-concat';
 import copy from 'rollup-plugin-copy';
+import rm from 'rollup-plugin-rm';
+
+const debug = process.env.DEBUG;
 
 export default {
   input: 'client/main.ts',
@@ -11,36 +15,47 @@ export default {
     name: 'webtimer',
     dir: 'dist/frontend',
     format: 'iife',
-    sourcemap: true,
-    sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-      return `${relativeSourcePath.replace(new RegExp('^\.\./'), '')}`;
-    },
+    ...debug ? {
+      sourcemap: true,
+      sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+        return `${relativeSourcePath.replace(new RegExp('^\.\./'), '')}`;
+      },
+    } : {},
   },
   plugins: [
     typescript({
-      "compilerOptions": {
-        "outDir": "dist/frontend/build-tsc"
+      'compilerOptions': {
+        'sourceMap': debug ? true : false,
+        'outDir': 'dist/frontend/build-tsc',
       },
     }),
     commonjs(),
     nodeResolve(),
-    terser(),
+    ...debug ? [ terser() ] : [],
+    concat({
+      groupedFiles: [
+        {
+          outputFile: 'dist/frontend/style.css',
+          files: [
+            'node_modules/normalize.css/normalize.css',
+            'html/style.css',
+          ],
+        }
+      ],
+    }),
     copy({
       targets: [
         { src: 'html/index.html', dest: 'dist/frontend' },
         { src: 'html/timer.html', dest: 'dist/frontend' },
         { src: 'html/inter.woff2', dest: 'dist/frontend' },
-        {
-          src: 'node_modules/normalize.css/normalize.css',
-          dest: 'dist/frontend',
-          transform: (contents) => new CleanCSS().minify(contents).styles
-        },
-        {
-          src: 'html/style.css',
-          dest: 'dist/frontend',
-          transform: (contents) => new CleanCSS().minify(contents).styles
-        },
+        ...debug ? [
+          {
+            src: 'dist/frontend/style.css',
+            dest: 'dist/frontend',
+            transform: (contents) => new CleanCSS().minify(contents).styles,
+          },
+        ] : [],
       ]
-    })
+    }),
   ],
 };
