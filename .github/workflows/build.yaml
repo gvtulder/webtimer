@@ -32,7 +32,8 @@ jobs:
         run: npm ci
 
       - name: Run Makefile
-        run: make
+        run: |
+          make all multiarch
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
