@@ -1,4 +1,6 @@
-import { TimerController, TimerEvent, TimerEventType } from "../lib/TimerController";
+import QRious from "qrious";
+
+import { TimerController, TimerEvent, TimerEventType } from "../lib/TimerController.js";
 
 export class ControlsDisplay {
     element : HTMLDivElement;

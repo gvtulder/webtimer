@@ -1,4 +1,4 @@
-import { TimerController, TimerEvent, TimerEventListener, TimerEventType } from "./TimerController";
+import { TimerController, TimerEvent, TimerEventListener, TimerEventType } from "./TimerController.js";
 
 export class TimerControllerWebsocket implements TimerController {
     private url : string;

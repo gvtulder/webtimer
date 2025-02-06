@@ -12,9 +12,6 @@ export default {
     dir: 'dist/frontend',
     format: 'iife',
     sourcemap: true,
-    globals: {
-      '@textfit': 'textfit',
-    },
     sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
       return `${relativeSourcePath.replace(new RegExp('^\.\./'), '')}`;
     },
@@ -40,5 +37,4 @@ export default {
       ]
     })
   ],
-  external: ['@textfit']
 };

@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "module": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "esModuleInterop": true,
     "sourceMap": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": {
-      "textFit": ["node_modules/textfit/textFit.min.js"]
-    },
     "outDir": "build/"
   }
 }

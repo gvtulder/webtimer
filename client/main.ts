@@ -1,6 +1,6 @@
-import { TimerDisplay } from "./ui/TimerDisplay";
-import { TimerControllerWebsocket } from "./lib/TimerControllerWebsocket";
-import { ControlsDisplay } from "./ui/ControlsDisplay";
+import { TimerDisplay } from "./ui/TimerDisplay.js";
+import { TimerControllerWebsocket } from "./lib/TimerControllerWebsocket.js";
+import { ControlsDisplay } from "./ui/ControlsDisplay.js";
 
 var controller : TimerControllerWebsocket;
 
