@@ -9,11 +9,11 @@ type TimerWatch struct {
 	timer     *Timer
 	lastState TimerState
 	ticker    *time.Ticker
-	done      chan bool
+	done      chan struct{}
 }
 
 func NewTimerWatch(timer *Timer) *TimerWatch {
-	return &TimerWatch{timer: timer, C: make(chan TimerState), done: make(chan bool)}
+	return &TimerWatch{timer: timer, C: make(chan TimerState), done: make(chan struct{})}
 }
 
 func (w *TimerWatch) Start() {
@@ -46,6 +46,6 @@ func (w *TimerWatch) HandleUpdate(s TimerState) {
 func (w *TimerWatch) Stop() {
 	if w.ticker != nil {
 		w.ticker.Stop()
-		w.done <- true
+		w.done <- struct{}{}
 	}
 }

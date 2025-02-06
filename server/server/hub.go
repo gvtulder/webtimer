@@ -16,15 +16,15 @@ type Session struct {
 	key            string
 	timer          *model.Timer
 	watch          *model.TimerWatch
-	done           chan bool
-	clients        map[*Client]bool
+	done           chan struct{}
+	clients        map[*Client]struct{}
 	lastDisconnect int64
 }
 
 func newSession(h *Hub, key string) *Session {
 	timer := model.NewTimer()
 	watch := model.NewTimerWatch(timer)
-	session := &Session{key: key, timer: timer, watch: watch, done: make(chan bool), clients: make(map[*Client]bool)}
+	session := &Session{key: key, timer: timer, watch: watch, done: make(chan struct{}), clients: make(map[*Client]struct{})}
 	h.sessions[key] = session
 
 	watch.Start()
@@ -59,7 +59,7 @@ func (s *Session) deleteClient(client *Client) {
 
 func (s *Session) stop() {
 	s.watch.Stop()
-	s.done <- true
+	s.done <- struct{}{}
 }
 
 type Hub struct {
@@ -67,7 +67,7 @@ type Hub struct {
 	broadcast  chan TimerStateMessage
 	commands   chan Command
 	sessions   map[string]*Session
-	clients    map[*Client]bool
+	clients    map[*Client]struct{}
 	register   chan *Client
 	unregister chan *Client
 	cleanup    *time.Ticker
@@ -81,7 +81,7 @@ func newHub(logger *log.Logger) *Hub {
 		sessions:   make(map[string]*Session),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		clients:    make(map[*Client]struct{}),
 	}
 }
 
@@ -133,9 +133,9 @@ func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.clients[client] = true
+			h.clients[client] = struct{}{}
 			session := h.getSession(client.key)
-			session.clients[client] = true
+			session.clients[client] = struct{}{}
 			h.logger.Printf("New connection [%s]: %s (client %d)\n", client.key, client.conn.RemoteAddr(), len(session.clients))
 			h.sendUpdate(session)
 

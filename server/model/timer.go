@@ -14,7 +14,7 @@ type TimerState struct {
 }
 
 type Timer struct {
-	C                chan bool
+	C                chan struct{}
 	black            bool
 	countdown        bool
 	remainingAtStart int64
@@ -22,7 +22,7 @@ type Timer struct {
 }
 
 func NewTimer() *Timer {
-	return &Timer{C: make(chan bool)}
+	return &Timer{C: make(chan struct{})}
 }
 
 func (t *Timer) Active() bool {
@@ -69,7 +69,7 @@ func (t *Timer) SetRemaining(s int64) {
 	if t.Remaining() > 0 {
 		t.countdown = true
 	}
-	t.C <- true
+	t.C <- struct{}{}
 }
 
 func (t *Timer) AddRemaining(s int64) {
@@ -77,13 +77,13 @@ func (t *Timer) AddRemaining(s int64) {
 	if t.Remaining() > 0 {
 		t.countdown = true
 	}
-	t.C <- true
+	t.C <- struct{}{}
 }
 
 func (t *Timer) Start() {
 	if t.startTime == 0 {
 		t.startTime = time.Now().UnixMilli()
-		t.C <- true
+		t.C <- struct{}{}
 	}
 }
 
@@ -91,7 +91,7 @@ func (t *Timer) Pause() {
 	if t.Running() {
 		t.remainingAtStart = t.remainingAtStart - (time.Now().UnixMilli() - t.startTime)
 		t.startTime = 0
-		t.C <- true
+		t.C <- struct{}{}
 	}
 }
 
@@ -100,25 +100,25 @@ func (t *Timer) Reset() {
 		t.startTime = 0
 		t.remainingAtStart = 0
 		t.countdown = false
-		t.C <- true
+		t.C <- struct{}{}
 	}
 }
 
 func (t *Timer) ToggleBlack() {
 	t.black = !t.black
-	t.C <- true
+	t.C <- struct{}{}
 }
 
 func (t *Timer) BlackOn() {
 	if !t.black {
 		t.black = true
-		t.C <- true
+		t.C <- struct{}{}
 	}
 }
 
 func (t *Timer) BlackOff() {
 	if t.black {
 		t.black = false
-		t.C <- true
+		t.C <- struct{}{}
 	}
 }
