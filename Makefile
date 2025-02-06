@@ -12,7 +12,7 @@ multiarch: fe
 	CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -ldflags="-s -w" -o dist/webtimer_arm64.exe .
 
 fe:
-	npx rollup -c
+	npx webpack --config webpack.config.js
 
 clean:
 	rm -rf dist
