@@ -24,7 +24,6 @@ export class TimerControllerWebsocket implements TimerController {
     private url : string;
     private ws : WebSocket;
     private timeout : number;
-    private lastRemainingSeconds : number;
     private listeners : TimerEventListener[];
     private lastEvent : TimerEvent;
 
@@ -95,9 +94,17 @@ export class TimerControllerWebsocket implements TimerController {
     }
 
     addRemainingSeconds(seconds : number) {
-        if (this.lastEvent && !this.lastEvent.countdown) {
-            // if we are not counting down, swap meaning of buttons
-            seconds = -seconds;
+        if (this.lastEvent) {
+            if (seconds < 0 && this.lastEvent.remainingSeconds == 0) {
+                return;
+            }
+            if (!this.lastEvent.countdown && this.lastEvent.remainingSeconds < 0) {
+                if (this.lastEvent.remainingSeconds - seconds > 0) {
+                    this.send({"cmd": "set", "sec": 0});
+                    return;
+                }
+                seconds = -seconds;
+            }
         }
         this.send({"cmd": "add", "sec": seconds});
     }
