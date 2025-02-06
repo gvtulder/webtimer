@@ -238,7 +238,7 @@ class Button {
             button.appendChild((document.getElementById(icon) as HTMLTemplateElement).content.cloneNode(true));
             button.classList.add('icon');
         }
-        button.addEventListener('click', (event : MouseEvent) => {
+        button.addEventListener('click', () => {
             if (this.handler) {
                 this.handler(this);
             }

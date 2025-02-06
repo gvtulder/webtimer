@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Encoder, Decoder, decode } from "@msgpack/msgpack";
+import { Encoder, Decoder } from "@msgpack/msgpack";
 
 import { TimerController, TimerEvent, TimerEventListener, TimerEventType } from "./TimerController.js";
 
@@ -34,7 +34,7 @@ export class TimerControllerWebsocket implements TimerController {
     connect(url : string) {
         this.url = url;
         this.ws = new WebSocket(this.url);
-        let reconnect = () => {
+        const reconnect = () => {
             this.ws.close();
             this.connect(url);
         }
@@ -43,7 +43,7 @@ export class TimerControllerWebsocket implements TimerController {
             if (ev.data instanceof Blob) {
                 msg = decoder.decode(await (ev.data as Blob).arrayBuffer());
             } else if (ev.data instanceof ArrayBuffer) {
-                msg = await decoder.decodeAsync((ev.data as any).stream());
+                msg = decoder.decode(ev.data);
             }
             if (msg !== null && msg.version) {
                 console.log(`Connected to webtimer.cc server ${url} (version ${msg.version})`)
@@ -85,7 +85,7 @@ export class TimerControllerWebsocket implements TimerController {
         }
     }
 
-    private send(msg : any) {
+    private send(msg : unknown) {
         this.ws.send(encoder.encode(msg));
     }
 

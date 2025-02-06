@@ -200,6 +200,7 @@ class TimeDisplay {
         try {
             textFit(this.element, { alignVert: true, alignHoriz: true, detectMultiLine: false, maxFontSize: 10000 });
         } catch {
+            // ignore
         }
     }
 }

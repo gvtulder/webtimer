@@ -42,7 +42,7 @@ export class Router {
         this.timerDisplay = timerDisplay;
         this.splashDisplay = splashDisplay;
 
-        window.addEventListener('popstate', (evt) => {
+        window.addEventListener('popstate', () => {
             this.handle();
         });
         this.handle();

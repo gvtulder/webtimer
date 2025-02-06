@@ -53,7 +53,7 @@ export class SplashDisplay {
 
     cleanString() : boolean {
         const v = this.input.value;
-        let c = this.input.value.replace(' ', '-').toLowerCase().replace(/[^-a-z0-9]/, '').substring(0, 20);
+        const c = this.input.value.replace(' ', '-').toLowerCase().replace(/[^-a-z0-9]/, '').substring(0, 20);
         if (v != c) this.input.value = c;
         const ok = c.length >= 5;
         this.button.disabled = !ok;

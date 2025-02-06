@@ -19,7 +19,7 @@ import { ControlsDisplay } from "./ui/ControlsDisplay.js";
 import { SplashDisplay } from "./ui/SplashDisplay.js";
 import { Router, WsUrlFunction } from "./ui/Router.js";
 
-declare var VERSION : string;
+declare const VERSION : string;
 
 export function startApp(basePath : string, wsUrl : WsUrlFunction) {
     console.log(`Running webtimer.cc client version ${VERSION}`);
@@ -44,7 +44,8 @@ export function startApp(basePath : string, wsUrl : WsUrlFunction) {
         if (!wakeLock && 'wakeLock' in navigator) {
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
-            } catch (err) {
+            } catch {
+                // ignore
             }
         }
     }
