@@ -27,6 +27,7 @@ export default {
     }),
     commonjs(),
     nodeResolve(),
+    terser(),
     copy({
       targets: [
         { src: 'html/index.html', dest: 'dist/frontend' },
