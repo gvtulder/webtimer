@@ -78,6 +78,10 @@ export class TimerControllerWebsocket implements TimerController {
     }
 
     addRemainingSeconds(seconds : number) {
+        if (this.lastEvent && !this.lastEvent.countdown) {
+            // if we are not counting down, swap meaning of buttons
+            seconds = -seconds;
+        }
         this.send({"cmd": "add", "sec": seconds});
     }
 
