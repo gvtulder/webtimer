@@ -367,14 +367,17 @@ body {
   display: none;
 }
 
-.timer-display .menu a {
+.timer-display .menu button {
   width: 26px;
   height: 26px;
   display: block;
   background: #aaa3;
   padding: 5px;
+  border: none;
   border-radius: 5px;
+  box-sizing: content-box;
   margin: 5px;
+  cursor: pointer;
 }
 
 .timer-display .menu svg {
@@ -384,13 +387,19 @@ body {
   fill: #fff2;
 }
 
-.timer-display.countdown.warning .menu a{
+.timer-display.countdown.warning .menu button {
   fill: #0002;
 }
 
 .timer-display.countdown.warning .menu svg {
   fill: #0003;
 }
+
+
+
+/******************************
+ * Welcome splash screen.
+ */
 
 .splash-display {
   display: flex;

@@ -62,17 +62,17 @@ export class TimerDisplay {
         div.appendChild(menuRight);
 
         // show exit
-        const exit = document.createElement('a');
+        const exit = document.createElement('button');
         exit.className = 'exit-timer';
-        exit.href = backUrl;
         exit.appendChild((document.getElementById('template-icon-exit') as HTMLTemplateElement).content.cloneNode(true));
         menuLeft.appendChild(exit);
         exit.addEventListener('click', (evt) => {
+            window.location.href = backUrl;
             evt.stopPropagation();
         });
 
         // show qr code
-        const qrShow = document.createElement('a');
+        const qrShow = document.createElement('button');
         qrShow.className = 'qr-show';
         qrShow.appendChild((document.getElementById('template-icon-qr') as HTMLTemplateElement).content.cloneNode(true));
         menuRight.appendChild(qrShow);
@@ -84,7 +84,7 @@ export class TimerDisplay {
         });
 
         // show full screen
-        const fullScreen = document.createElement('a');
+        const fullScreen = document.createElement('button');
         fullScreen.className = 'show-fullscreen';
         fullScreen.appendChild((document.getElementById('template-icon-expand') as HTMLTemplateElement).content.cloneNode(true));
         menuRight.appendChild(fullScreen);
