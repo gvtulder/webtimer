@@ -7,7 +7,7 @@ export default {
   input: 'client/main.ts',
   output: {
     name: 'webtimer',
-    dir: 'dist',
+    dir: 'dist/frontend',
     format: 'iife',
     sourcemap: true,
     globals: {
@@ -20,7 +20,7 @@ export default {
   plugins: [
     typescript({
       "compilerOptions": {
-        "outDir": "dist/build-tsc"
+        "outDir": "dist/frontend/build-tsc"
       },
     }),
     commonjs(),
