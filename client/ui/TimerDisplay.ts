@@ -122,7 +122,7 @@ export class TimerDisplay {
         const div = this.qrContainer;
         div.innerHTML = QR(window.location.href, 'M');
         const qrp = document.createElement('p');
-        qrp.textContent = window.location.href;
+        qrp.textContent = window.location.href.replace(/^https:\/\/(?=[a-z])/, '').replace(/\/$/, '');
         div.appendChild(qrp);
     }
 
