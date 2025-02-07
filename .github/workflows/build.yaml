@@ -198,4 +198,3 @@ jobs:
           body: |
             Download the executable file for your system.
           files: dist/webtimer*
-

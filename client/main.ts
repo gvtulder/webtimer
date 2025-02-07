@@ -19,16 +19,16 @@ import { ControlsDisplay } from "./ui/ControlsDisplay.js";
 import { SplashDisplay } from "./ui/SplashDisplay.js";
 import { Router, WsUrlFunction } from "./ui/Router.js";
 
-declare const VERSION : string;
+declare const VERSION: string;
 
-export function startApp(basePath : string, wsUrl : WsUrlFunction) {
+export function startApp(basePath: string, wsUrl: WsUrlFunction) {
     console.log(`Running webtimer.cc client version ${VERSION}`);
 
     const controller = new TimerControllerWebsocket();
 
     const router = new Router(basePath, wsUrl);
 
-    const container = document.getElementById('container');
+    const container = document.getElementById("container");
 
     const timerDisplay = new TimerDisplay(controller, router);
     container.appendChild(timerDisplay.element);
@@ -41,9 +41,9 @@ export function startApp(basePath : string, wsUrl : WsUrlFunction) {
     let wakeLock = null;
 
     async function enableWakeLock() {
-        if (!wakeLock && 'wakeLock' in navigator) {
+        if (!wakeLock && "wakeLock" in navigator) {
             try {
-                wakeLock = await navigator.wakeLock.request('screen');
+                wakeLock = await navigator.wakeLock.request("screen");
             } catch {
                 // ignore
             }
@@ -52,14 +52,19 @@ export function startApp(basePath : string, wsUrl : WsUrlFunction) {
 
     function releaseWakeLock() {
         if (wakeLock) {
-            wakeLock.release().then(() => { wakeLock = null; });
+            wakeLock.release().then(() => {
+                wakeLock = null;
+            });
         }
     }
 
-    timerDisplay.element.addEventListener('click', () => {
-        container.classList.toggle('fullscreen');
-        if (container.classList.contains('fullscreen')) {
-            if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+    timerDisplay.element.addEventListener("click", () => {
+        container.classList.toggle("fullscreen");
+        if (container.classList.contains("fullscreen")) {
+            if (
+                !document.fullscreenElement &&
+                document.documentElement.requestFullscreen
+            ) {
                 document.documentElement.requestFullscreen();
             }
             enableWakeLock();
@@ -70,7 +75,6 @@ export function startApp(basePath : string, wsUrl : WsUrlFunction) {
             releaseWakeLock();
         }
     });
-
 
     router.run(basePath, controller, timerDisplay, splashDisplay);
 

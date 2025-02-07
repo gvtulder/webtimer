@@ -24,17 +24,17 @@ export enum TimerEventType {
  * An event following a timer state update.
  */
 export type TimerEvent = {
-    type : TimerEventType,
-    connected? : boolean,
-    active? : boolean,
-    black? : boolean,
-    countdown? : boolean,
-    running? : boolean,
-    remainingSeconds? : number,
-    clients? : number,
- };
+    type: TimerEventType;
+    connected?: boolean;
+    active?: boolean;
+    black?: boolean;
+    countdown?: boolean;
+    running?: boolean;
+    remainingSeconds?: number;
+    clients?: number;
+};
 
-export type TimerEventListener = (event : TimerEvent) => void;
+export type TimerEventListener = (event: TimerEvent) => void;
 
 /**
  * A TimerController handles the connection with a timer, processing commands and sending TimerEvent events to subscribers.
@@ -44,48 +44,48 @@ export interface TimerController {
      * Connects to the timer server (e.g., through a WebSocket).
      * @param url the URL of the timer server
      */
-    connect(url : string) : void;
+    connect(url: string): void;
 
     /**
      * Disconnects from the timer server.
      */
-    disconnect() : void;
+    disconnect(): void;
 
     /**
      * Sets the remaining seconds on the timer.
      * @param seconds the new time in seconds
      */
-    setRemainingSeconds(seconds : number) : void;
+    setRemainingSeconds(seconds: number): void;
 
     /**
      * Adds (or substracts) seconds from the timer.
      * @param seconds the number of seconds to add/subtract
      */
-    addRemainingSeconds(seconds : number) : void;
+    addRemainingSeconds(seconds: number): void;
 
     /**
      * Starts the timer.
      */
-    startTimer() : void;
+    startTimer(): void;
 
     /**
      * Stops the timer and sets the time to zero.
      */
-    resetTimer() : void;
+    resetTimer(): void;
 
     /**
      * Pauses the timer.
      */
-    pauseTimer() : void;
+    pauseTimer(): void;
 
     /**
      * Toggles black-screen mode.
      */
-    toggleBlack() : void;
+    toggleBlack(): void;
 
     /**
      * Adds a listener to receive TimerEvent updates.
      * @param listener an event handler
      */
-    addListener(listener : TimerEventListener) : void;
+    addListener(listener: TimerEventListener): void;
 }

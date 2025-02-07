@@ -15,7 +15,12 @@
 
 import { Encoder, Decoder } from "@msgpack/msgpack";
 
-import { TimerController, TimerEvent, TimerEventListener, TimerEventType } from "./TimerController.js";
+import {
+    TimerController,
+    TimerEvent,
+    TimerEventListener,
+    TimerEventType,
+} from "./TimerController.js";
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -27,11 +32,11 @@ const decoder = new Decoder();
  * The controller automatically attempts to reconnect if the connection is lost.
  */
 export class TimerControllerWebsocket implements TimerController {
-    private url : string;
-    private ws : WebSocket;
-    private timeout : number;
-    private listeners : TimerEventListener[];
-    private lastEvent : TimerEvent;
+    private url: string;
+    private ws: WebSocket;
+    private timeout: number;
+    private listeners: TimerEventListener[];
+    private lastEvent: TimerEvent;
 
     constructor() {
         this.listeners = [];
@@ -41,14 +46,14 @@ export class TimerControllerWebsocket implements TimerController {
      * Connect to the timer server at the given URL.
      * @param url a websocket URL
      */
-    connect(url : string) {
+    connect(url: string) {
         this.url = url;
         this.ws = new WebSocket(this.url);
         const reconnect = () => {
             this.ws.close();
             this.connect(url);
-        }
-        this.ws.addEventListener('message', async (ev : MessageEvent) => {
+        };
+        this.ws.addEventListener("message", async (ev: MessageEvent) => {
             let msg = null;
             if (ev.data instanceof Blob) {
                 msg = decoder.decode(await (ev.data as Blob).arrayBuffer());
@@ -56,7 +61,9 @@ export class TimerControllerWebsocket implements TimerController {
                 msg = decoder.decode(ev.data);
             }
             if (msg !== null && msg.version) {
-                console.log(`Connected to webtimer.cc server ${url} (version ${msg.version})`)
+                console.log(
+                    `Connected to webtimer.cc server ${url} (version ${msg.version})`,
+                );
             } else if (msg !== null) {
                 this.triggerEvent({
                     type: TimerEventType.UpdateRemainingSeconds,
@@ -95,51 +102,54 @@ export class TimerControllerWebsocket implements TimerController {
         }
     }
 
-    private send(msg : unknown) {
+    private send(msg: unknown) {
         this.ws.send(encoder.encode(msg));
     }
 
-    setRemainingSeconds(seconds : number) {
-        this.send({"cmd": "set", "sec": seconds});
+    setRemainingSeconds(seconds: number) {
+        this.send({ cmd: "set", sec: seconds });
     }
 
-    addRemainingSeconds(seconds : number) {
+    addRemainingSeconds(seconds: number) {
         if (this.lastEvent) {
             if (seconds < 0 && this.lastEvent.remainingSeconds == 0) {
                 return;
             }
-            if (!this.lastEvent.countdown && this.lastEvent.remainingSeconds < 0) {
+            if (
+                !this.lastEvent.countdown &&
+                this.lastEvent.remainingSeconds < 0
+            ) {
                 if (this.lastEvent.remainingSeconds - seconds > 0) {
-                    this.send({"cmd": "set", "sec": 0});
+                    this.send({ cmd: "set", sec: 0 });
                     return;
                 }
                 seconds = -seconds;
             }
         }
-        this.send({"cmd": "add", "sec": seconds});
+        this.send({ cmd: "add", sec: seconds });
     }
 
     startTimer() {
-        this.send({"cmd": "start"});
+        this.send({ cmd: "start" });
     }
 
     pauseTimer() {
-        this.send({"cmd": "pause"});
+        this.send({ cmd: "pause" });
     }
 
     resetTimer() {
-        this.send({"cmd": "reset"});
+        this.send({ cmd: "reset" });
     }
 
     toggleBlack() {
-        this.send({"cmd": "toggleblack"});
+        this.send({ cmd: "toggleblack" });
     }
 
-    addListener(listener : TimerEventListener) {
+    addListener(listener: TimerEventListener) {
         this.listeners.push(listener);
     }
 
-    triggerEvent(event : TimerEvent) {
+    triggerEvent(event: TimerEvent) {
         this.lastEvent = event;
         for (const listener of this.listeners) {
             listener(event);

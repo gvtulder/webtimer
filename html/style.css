@@ -1,19 +1,20 @@
-
-@import url('normalize.css/normalize.css');
+@import url("normalize.css/normalize.css");
 
 /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'); */
 /* latin */
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url(inter.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url(inter.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-variant-numeric: tabular-nums;
   font-size: 18px;
   background: #333;
@@ -36,7 +37,6 @@ body {
   touch-action: manipulation;
 }
 
-
 /******************************
  * Show/hide panels based on state.
  */
@@ -48,7 +48,6 @@ body {
 .show-timer .splash-display {
   display: none;
 }
-
 
 /******************************
  * Main timer display.
@@ -96,7 +95,10 @@ body {
 }
 
 .timer-display.running .card {
-  transition: opacity 0.5s, background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+  transition:
+    opacity 0.5s,
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out;
 }
 
 .timer-display .time {
@@ -156,9 +158,6 @@ body {
 .fullscreen .controls-display {
   display: none;
 }
-
-
-
 
 /******************************
  * Control buttons.
@@ -318,13 +317,12 @@ body {
 .controls.secondary button:active {
   background: #aaa;
 }
-@media(hover: hover) {
+@media (hover: hover) {
   .controls button:hover,
   .controls.secondary button:hover {
     background: #aaa;
   }
 }
-
 
 @media screen and (min-width: 700px) {
   .controls.secondary .secondarySet {
@@ -358,9 +356,6 @@ body {
     margin: 0 5px;
   }
 }
-
-
-
 
 /******************************
  * QR code.
@@ -397,8 +392,6 @@ body {
   font-size: 20px;
 }
 
-
-
 /******************************
  * Controls on timer screen.
  */
@@ -426,7 +419,7 @@ body {
 }
 
 .timer-display .menu .right {
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 
 .timer-display .menu .status {
@@ -482,7 +475,7 @@ body {
   background: #3336;
 }
 
-@media(hover: hover) {
+@media (hover: hover) {
   .timer-display .menu button:hover {
     background: #3336;
   }
@@ -506,8 +499,6 @@ body {
 .timer-display.countdown.warning .menu .status {
   color: #0004;
 }
-
-
 
 /******************************
  * Welcome splash screen.

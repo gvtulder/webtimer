@@ -18,7 +18,7 @@
  * @param seconds A number of seconds.
  * @returns The timestamp string of the format M:SS.
  */
-export function formatTime(seconds : number) : string {
+export function formatTime(seconds: number): string {
     const negative = seconds < 0;
     seconds = Math.round(Math.abs(seconds));
     const components = [];
@@ -30,9 +30,10 @@ export function formatTime(seconds : number) : string {
         components.push(0);
     }
     components.reverse();
-    for (let i = 1; i<components.length; i++) {
-        components[i] = components[i] < 10 ? `0${components[i]}` : `${components[i]}`;
+    for (let i = 1; i < components.length; i++) {
+        components[i] =
+            components[i] < 10 ? `0${components[i]}` : `${components[i]}`;
     }
-    return components.join(':');
-    return (negative ? '-' : '') + components.join(':');
+    return components.join(":");
+    return (negative ? "-" : "") + components.join(":");
 }

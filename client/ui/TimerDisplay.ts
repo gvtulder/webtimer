@@ -17,24 +17,30 @@ import textFit from "textfit";
 import { QR } from "qr-svg";
 
 import { formatTime } from "../lib/format.js";
-import { TimerEvent, TimerEventType, TimerController } from "../lib/TimerController.js";
+import {
+    TimerEvent,
+    TimerEventType,
+    TimerController,
+} from "../lib/TimerController.js";
 import { Router } from "./Router.js";
 
 export class TimerDisplay {
-    element : HTMLDivElement;
+    element: HTMLDivElement;
 
-    private controller : TimerController;
-    private router : Router;
-    private timeDisplay : TimeDisplay;
-    private connecting : HTMLDivElement;
-    private statusBar : HTMLDivElement;
-    private qrContainer : HTMLDivElement;
+    private controller: TimerController;
+    private router: Router;
+    private timeDisplay: TimeDisplay;
+    private connecting: HTMLDivElement;
+    private statusBar: HTMLDivElement;
+    private qrContainer: HTMLDivElement;
 
-    constructor(controller : TimerController, router : Router) {
+    constructor(controller: TimerController, router: Router) {
         this.controller = controller;
         this.router = router;
         this.build();
-        controller.addListener((event: TimerEvent) => { this.handleTimerEvent(event) });
+        controller.addListener((event: TimerEvent) => {
+            this.handleTimerEvent(event);
+        });
     }
 
     activate() {
@@ -42,12 +48,12 @@ export class TimerDisplay {
     }
 
     build() {
-        const div = document.createElement('div');
-        div.className = 'timer-display';
+        const div = document.createElement("div");
+        div.className = "timer-display";
         this.element = div;
 
-        const card = document.createElement('div');
-        card.className = 'card';
+        const card = document.createElement("div");
+        card.className = "card";
         div.appendChild(card);
 
         // countdown showing remaining time
@@ -55,141 +61,182 @@ export class TimerDisplay {
         card.appendChild(this.timeDisplay.element);
 
         // connecting...
-        const connecting = document.createElement('div');
-        connecting.innerHTML = 'Connecting...';
-        connecting.className = 'connecting';
+        const connecting = document.createElement("div");
+        connecting.innerHTML = "Connecting...";
+        connecting.className = "connecting";
         div.appendChild(connecting);
         this.connecting = connecting;
 
         // qr link
-        const qr = document.createElement('div');
-        qr.className = 'qr';
+        const qr = document.createElement("div");
+        qr.className = "qr";
         this.qrContainer = qr;
         div.appendChild(qr);
-        qr.addEventListener('click', (evt) => {
-            qr.classList.remove('visible');
+        qr.addEventListener("click", (evt) => {
+            qr.classList.remove("visible");
             evt.stopPropagation();
             evt.preventDefault();
             return false;
         });
 
         // menu
-        const menu = document.createElement('div');
-        menu.className = 'menu';
+        const menu = document.createElement("div");
+        menu.className = "menu";
         div.appendChild(menu);
 
-        menu.addEventListener('click', (evt) => {
-            if (evt.target && (evt.target as HTMLElement).closest('.show-fullscreen')) {
+        menu.addEventListener("click", (evt) => {
+            if (
+                evt.target &&
+                (evt.target as HTMLElement).closest(".show-fullscreen")
+            ) {
                 return;
             }
             evt.stopPropagation();
         });
 
         // menu buttons
-        const menuLeft = document.createElement('div');
-        menuLeft.className = 'left';
+        const menuLeft = document.createElement("div");
+        menuLeft.className = "left";
         menu.appendChild(menuLeft);
 
-        const statusBar = document.createElement('div');
-        statusBar.className = 'status';
-        statusBar.innerHTML = '';
+        const statusBar = document.createElement("div");
+        statusBar.className = "status";
+        statusBar.innerHTML = "";
         menu.appendChild(statusBar);
         this.statusBar = statusBar;
 
-        const menuRight = document.createElement('div');
-        menuRight.className = 'right';
+        const menuRight = document.createElement("div");
+        menuRight.className = "right";
         menu.appendChild(menuRight);
 
         // show exit
-        const exit = document.createElement('button');
-        exit.className = 'exit-timer';
-        exit.appendChild((document.getElementById('template-icon-exit') as HTMLTemplateElement).content.cloneNode(true));
+        const exit = document.createElement("button");
+        exit.className = "exit-timer";
+        exit.appendChild(
+            (
+                document.getElementById(
+                    "template-icon-exit",
+                ) as HTMLTemplateElement
+            ).content.cloneNode(true),
+        );
         menuLeft.appendChild(exit);
-        exit.addEventListener('click', (evt) => {
+        exit.addEventListener("click", (evt) => {
             this.router.navigateToSplash();
             evt.stopPropagation();
         });
 
         // show qr code
-        const qrShow = document.createElement('button');
-        qrShow.className = 'qr-show';
-        qrShow.appendChild((document.getElementById('template-icon-qr') as HTMLTemplateElement).content.cloneNode(true));
+        const qrShow = document.createElement("button");
+        qrShow.className = "qr-show";
+        qrShow.appendChild(
+            (
+                document.getElementById(
+                    "template-icon-qr",
+                ) as HTMLTemplateElement
+            ).content.cloneNode(true),
+        );
         menuRight.appendChild(qrShow);
-        qrShow.addEventListener('click', (evt) => {
-            qr.classList.toggle('visible');
+        qrShow.addEventListener("click", (evt) => {
+            qr.classList.toggle("visible");
             evt.stopPropagation();
             evt.preventDefault();
             return false;
         });
 
         // show full screen
-        const fullScreen = document.createElement('button');
-        fullScreen.className = 'show-fullscreen';
-        fullScreen.appendChild((document.getElementById('template-icon-expand') as HTMLTemplateElement).content.cloneNode(true));
+        const fullScreen = document.createElement("button");
+        fullScreen.className = "show-fullscreen";
+        fullScreen.appendChild(
+            (
+                document.getElementById(
+                    "template-icon-expand",
+                ) as HTMLTemplateElement
+            ).content.cloneNode(true),
+        );
         menuRight.appendChild(fullScreen);
-        fullScreen.addEventListener('click', (evt) => {
-            qr.classList.remove('visible');
+        fullScreen.addEventListener("click", (evt) => {
+            qr.classList.remove("visible");
             evt.preventDefault();
         });
     }
 
     renderQR() {
         const div = this.qrContainer;
-        div.innerHTML = QR(window.location.href, 'M');
-        const qrp = document.createElement('p');
-        qrp.textContent = window.location.href.replace(/^https:\/\/(?=[a-z])/, '').replace(/\/$/, '');
+        div.innerHTML = QR(window.location.href, "M");
+        const qrp = document.createElement("p");
+        qrp.textContent = window.location.href
+            .replace(/^https:\/\/(?=[a-z])/, "")
+            .replace(/\/$/, "");
         div.appendChild(qrp);
     }
 
-    showTime(seconds : number) {
+    showTime(seconds: number) {
         this.timeDisplay.showTime(seconds);
     }
 
-    handleTimerEvent(event : TimerEvent) {
+    handleTimerEvent(event: TimerEvent) {
         if (event.type == TimerEventType.UpdateRemainingSeconds) {
             this.showTime(event.active ? event.remainingSeconds : 0);
 
-            this.element.classList.toggle('black', event.black);
-            this.element.classList.toggle('countdown', event.countdown);
-            this.element.classList.toggle('running', event.active && event.running);
-            this.element.classList.toggle('timeout', event.active && event.remainingSeconds !== null && event.remainingSeconds <= 0);
-            this.element.classList.toggle('warning', event.active && event.remainingSeconds !== null && event.remainingSeconds <= 60 && event.remainingSeconds > 0);
+            this.element.classList.toggle("black", event.black);
+            this.element.classList.toggle("countdown", event.countdown);
+            this.element.classList.toggle(
+                "running",
+                event.active && event.running,
+            );
+            this.element.classList.toggle(
+                "timeout",
+                event.active &&
+                    event.remainingSeconds !== null &&
+                    event.remainingSeconds <= 0,
+            );
+            this.element.classList.toggle(
+                "warning",
+                event.active &&
+                    event.remainingSeconds !== null &&
+                    event.remainingSeconds <= 60 &&
+                    event.remainingSeconds > 0,
+            );
 
             if (event.clients == 2) {
-                this.statusBar.innerHTML = '+1 connected';
+                this.statusBar.innerHTML = "+1 connected";
             } else if (event.clients > 2) {
                 this.statusBar.innerHTML = `+${event.clients - 1} connected`;
             } else {
-                this.statusBar.innerHTML = '';
+                this.statusBar.innerHTML = "";
             }
 
-            this.connecting.classList.remove('disconnected');
+            this.connecting.classList.remove("disconnected");
         } else if (event.type == TimerEventType.Connecting) {
-            this.connecting.classList.add('disconnected');
+            this.connecting.classList.add("disconnected");
         }
     }
 }
 
 class TimeDisplay {
-    element : HTMLDivElement;
+    element: HTMLDivElement;
 
-    private currentText : string;
+    private currentText: string;
 
     constructor() {
         this.build();
 
-        window.addEventListener('resize', () => { this.updateTextFit(); });
-        new ResizeObserver(() => { this.updateTextFit(); }).observe(this.element);
+        window.addEventListener("resize", () => {
+            this.updateTextFit();
+        });
+        new ResizeObserver(() => {
+            this.updateTextFit();
+        }).observe(this.element);
     }
 
     build() {
-        const div = document.createElement('div');
-        div.className = 'time';
+        const div = document.createElement("div");
+        div.className = "time";
         this.element = div;
     }
 
-    showTime(seconds : number) {
-        const newString = seconds === null ? '' : formatTime(seconds);
+    showTime(seconds: number) {
+        const newString = seconds === null ? "" : formatTime(seconds);
         if (newString != this.currentText) {
             this.element.innerHTML = this.currentText = newString;
             this.updateTextFit();
@@ -198,7 +245,12 @@ class TimeDisplay {
 
     updateTextFit() {
         try {
-            textFit(this.element, { alignVert: true, alignHoriz: true, detectMultiLine: false, maxFontSize: 10000 });
+            textFit(this.element, {
+                alignVert: true,
+                alignHoriz: true,
+                detectMultiLine: false,
+                maxFontSize: 10000,
+            });
         } catch {
             // ignore
         }
