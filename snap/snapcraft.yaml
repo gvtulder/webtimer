@@ -1,0 +1,58 @@
+name: webtimer
+base: bare
+build-base: core24
+type: app
+
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [amd64, arm64]
+    build-for: [arm64]
+
+title: webtimer.cc
+summary: webtimer.cc - web-based presentation timer
+description: |
+  webtimer.cc is a simple, free, web-based presentation timer with remote control. Use your laptop to show the countdown timer and use your phone as the remote.
+icon: snap/icon-256x.png
+license: GPL-3.0+
+contact:
+  - https://webtimer.cc/
+  - https://github.com/gvtulder/webtimer/
+  - https://vantulder.net/
+issues:
+  - https://github.com/gvtulder/webtimer/issues
+source-code: https://github.com/gvtulder/webtimer/
+website: https://webtimer.cc/
+adopt-info: webtimer
+
+grade: devel
+confinement: strict
+
+build-snaps:
+  - go
+
+parts:
+  webtimer:
+    plugin: go
+    build-snaps:
+      - go/latest/stable
+      - node/22/stable
+    source-type: git
+    source: .
+    override-pull: |
+      craftctl default
+      craftctl set version="$(git describe --always --dirty | sed 's/v//')"
+    override-build: |
+      npm ci
+      npx webpack -c webpack.config.js
+      CGO_ENABLED=0 go build \
+        -ldflags="-s -w -X main.Version=$(git describe --always --dirty)" \
+        -o $SNAPCRAFT_PART_INSTALL/webtimer
+
+apps:
+  webtimer:
+    command: webtimer
+    plugs:
+      - network-bind
