@@ -134,6 +134,10 @@ jobs:
       packages: write
       id-token: write
 
+    strategy:
+      matrix:
+        snap_arch: [amd64, arm64]
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -150,12 +154,14 @@ jobs:
       - name: Build snap
         id: snapcraft
         uses: canonical/action-build@v1
+        with:
+          snapcraft-args: "--platform ${{ matrix.snap_arch }}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         id: artifact-upload-step
         with:
-          name: snap
+          name: snap-${{ matrix.snap_arch }}
           path: webtimer*.snap
 
   make-release:

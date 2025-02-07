@@ -43,6 +43,7 @@ parts:
     source: .
     override-pull: |
       craftctl default
+      git fetch --tags --force
       craftctl set version="$(git describe --always --dirty | sed 's/v//')"
     override-build: |
       npm ci
