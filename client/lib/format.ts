@@ -13,7 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-export function formatTime(seconds : number) {
+/**
+ * Formats the number of seconds as a string (e.g., 0:00).
+ * @param seconds A number of seconds.
+ * @returns The timestamp string of the format M:SS.
+ */
+export function formatTime(seconds : number) : string {
     const negative = seconds < 0;
     seconds = Math.round(Math.abs(seconds));
     const components = [];

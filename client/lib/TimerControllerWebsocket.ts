@@ -20,6 +20,12 @@ import { TimerController, TimerEvent, TimerEventListener, TimerEventType } from 
 const encoder = new Encoder();
 const decoder = new Decoder();
 
+/**
+ * Manages the WebSocket connection with the timer server.
+ *
+ * Communication is handled through msgpack messages.
+ * The controller automatically attempts to reconnect if the connection is lost.
+ */
 export class TimerControllerWebsocket implements TimerController {
     private url : string;
     private ws : WebSocket;
@@ -31,6 +37,10 @@ export class TimerControllerWebsocket implements TimerController {
         this.listeners = [];
     }
 
+    /**
+     * Connect to the timer server at the given URL.
+     * @param url a websocket URL
+     */
     connect(url : string) {
         this.url = url;
         this.ws = new WebSocket(this.url);

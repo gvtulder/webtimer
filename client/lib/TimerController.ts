@@ -19,6 +19,10 @@ export enum TimerEventType {
     StartTimer = "StartTimer",
     PauseTimer = "PauseTimer",
 }
+
+/**
+ * An event following a timer state update.
+ */
 export type TimerEvent = {
     type : TimerEventType,
     connected? : boolean,
@@ -29,16 +33,59 @@ export type TimerEvent = {
     remainingSeconds? : number,
     clients? : number,
  };
+
 export type TimerEventListener = (event : TimerEvent) => void;
 
+/**
+ * A TimerController handles the connection with a timer, processing commands and sending TimerEvent events to subscribers.
+ */
 export interface TimerController {
+    /**
+     * Connects to the timer server (e.g., through a WebSocket).
+     * @param url the URL of the timer server
+     */
     connect(url : string) : void;
+
+    /**
+     * Disconnects from the timer server.
+     */
     disconnect() : void;
+
+    /**
+     * Sets the remaining seconds on the timer.
+     * @param seconds the new time in seconds
+     */
     setRemainingSeconds(seconds : number) : void;
+
+    /**
+     * Adds (or substracts) seconds from the timer.
+     * @param seconds the number of seconds to add/subtract
+     */
     addRemainingSeconds(seconds : number) : void;
+
+    /**
+     * Starts the timer.
+     */
     startTimer() : void;
+
+    /**
+     * Stops the timer and sets the time to zero.
+     */
     resetTimer() : void;
+
+    /**
+     * Pauses the timer.
+     */
     pauseTimer() : void;
+
+    /**
+     * Toggles black-screen mode.
+     */
     toggleBlack() : void;
+
+    /**
+     * Adds a listener to receive TimerEvent updates.
+     * @param listener an event handler
+     */
     addListener(listener : TimerEventListener) : void;
 }
