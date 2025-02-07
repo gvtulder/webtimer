@@ -43,11 +43,11 @@ export class TimerDisplay {
         });
     }
 
-    activate() {
+    activate(): void {
         this.renderQR();
     }
 
-    build() {
+    build(): void {
         const div = document.createElement("div");
         div.className = "timer-display";
         this.element = div;
@@ -160,7 +160,7 @@ export class TimerDisplay {
         });
     }
 
-    renderQR() {
+    renderQR(): void {
         const div = this.qrContainer;
         div.innerHTML = QR(window.location.href, "M");
         const qrp = document.createElement("p");
@@ -170,11 +170,11 @@ export class TimerDisplay {
         div.appendChild(qrp);
     }
 
-    showTime(seconds: number) {
+    showTime(seconds: number): void {
         this.timeDisplay.showTime(seconds);
     }
 
-    handleTimerEvent(event: TimerEvent) {
+    handleTimerEvent(event: TimerEvent): void {
         if (event.type == TimerEventType.UpdateRemainingSeconds) {
             this.showTime(event.active ? event.remainingSeconds : 0);
 
@@ -229,13 +229,13 @@ class TimeDisplay {
         }).observe(this.element);
     }
 
-    build() {
+    build(): void {
         const div = document.createElement("div");
         div.className = "time";
         this.element = div;
     }
 
-    showTime(seconds: number) {
+    showTime(seconds: number): void {
         const newString = seconds === null ? "" : formatTime(seconds);
         if (newString != this.currentText) {
             this.element.innerHTML = this.currentText = newString;
@@ -243,7 +243,7 @@ class TimeDisplay {
         }
     }
 
-    updateTextFit() {
+    updateTextFit(): void {
         try {
             textFit(this.element, {
                 alignVert: true,

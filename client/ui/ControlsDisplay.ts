@@ -37,7 +37,7 @@ export class ControlsDisplay {
         });
     }
 
-    build() {
+    build(): void {
         const div = document.createElement("div");
         div.className = "controls-display";
         this.element = div;
@@ -56,7 +56,7 @@ export class ControlsDisplay {
             text: string,
             icon: string,
             fn: ButtonHandler,
-        ) => {
+        ): Button => {
             const btn = new Button(name, text, icon, fn);
             tgt.appendChild(btn.element);
             return btn;
@@ -168,7 +168,7 @@ export class ControlsDisplay {
         this.addDropdownHandlers();
     }
 
-    handleTimerEvent(event: TimerEvent) {
+    handleTimerEvent(event: TimerEvent): void {
         if (event.type == TimerEventType.UpdateRemainingSeconds) {
             this.btnStart.toggleEnabled(!event.running);
             this.btnPause.toggleEnabled(event.running);
@@ -176,7 +176,7 @@ export class ControlsDisplay {
         }
     }
 
-    addDropdownHandlers() {
+    addDropdownHandlers(): void {
         document.addEventListener("click", (evt) => {
             const tgtButton =
                 evt.target && (evt.target as HTMLElement).closest("button.up");
@@ -207,7 +207,7 @@ class ButtonList {
         this.buttons = [];
     }
 
-    build(name: string) {
+    build(name: string): void {
         const div = document.createElement("div");
         div.className = `button-list ${name}`;
 
@@ -242,14 +242,14 @@ class ButtonList {
         this.element = div;
     }
 
-    add(button: Button, setLastClicked?: boolean) {
+    add(button: Button, setLastClicked?: boolean): Button {
         const li = document.createElement("li");
         li.appendChild(button.element);
         this.list.appendChild(li);
         this.buttons.push(button);
 
         const oldHandler = button.handler;
-        button.handler = (tgt: Button) => {
+        button.handler = (tgt: Button): void => {
             this.updateLastClicked(button, oldHandler);
             oldHandler(tgt);
         };
@@ -261,7 +261,7 @@ class ButtonList {
         return button;
     }
 
-    updateLastClicked(button: Button, handler: ButtonHandler) {
+    updateLastClicked(button: Button, handler: ButtonHandler): void {
         this.lastClicked = button;
         this.lastClickedHandler = handler;
         this.btnCurrent.innerHTML = button.element.innerHTML;
@@ -282,7 +282,7 @@ class Button {
         this.handler = handler;
     }
 
-    build(name: string, text: string, icon: string) {
+    build(name: string, text: string, icon: string): void {
         const button = document.createElement("button");
         button.className = `button-${name}`;
         if (!icon) {
@@ -304,27 +304,27 @@ class Button {
         this.element = button;
     }
 
-    toggleEnabled(enabled: boolean) {
+    toggleEnabled(enabled: boolean): void {
         this.element.classList.toggle("disabled", !enabled);
     }
 
-    enable() {
+    enable(): void {
         this.element.classList.remove("disabled");
     }
 
-    disable() {
+    disable(): void {
         this.element.classList.add("disabled");
     }
 
-    toggleOnOff(on: boolean) {
+    toggleOnOff(on: boolean): void {
         this.element.classList.toggle("on", on);
     }
 
-    on() {
+    on(): void {
         this.element.classList.add("on");
     }
 
-    off() {
+    off(): void {
         this.element.classList.remove("on");
     }
 }

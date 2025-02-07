@@ -21,7 +21,7 @@ import { Router, WsUrlFunction } from "./ui/Router.js";
 
 declare const VERSION: string;
 
-export function startApp(basePath: string, wsUrl: WsUrlFunction) {
+export function startApp(basePath: string, wsUrl: WsUrlFunction): Router {
     console.log(`Running webtimer.cc client version ${VERSION}`);
 
     const controller = new TimerControllerWebsocket();
@@ -40,7 +40,7 @@ export function startApp(basePath: string, wsUrl: WsUrlFunction) {
 
     let wakeLock = null;
 
-    async function enableWakeLock() {
+    async function enableWakeLock(): Promise<void> {
         if (!wakeLock && "wakeLock" in navigator) {
             try {
                 wakeLock = await navigator.wakeLock.request("screen");
@@ -50,7 +50,7 @@ export function startApp(basePath: string, wsUrl: WsUrlFunction) {
         }
     }
 
-    function releaseWakeLock() {
+    function releaseWakeLock(): void {
         if (wakeLock) {
             wakeLock.release().then(() => {
                 wakeLock = null;

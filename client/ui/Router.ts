@@ -42,7 +42,7 @@ export class Router {
         timerController: TimerController,
         timerDisplay: TimerDisplay,
         splashDisplay: SplashDisplay,
-    ) {
+    ): void {
         this.timerController = timerController;
         this.timerDisplay = timerDisplay;
         this.splashDisplay = splashDisplay;
@@ -53,7 +53,7 @@ export class Router {
         this.handle();
     }
 
-    handle() {
+    handle(): void {
         let path = window.location.pathname;
         if (!path.match(this.basePathRegexp)) {
             this.navigateTo(this.basePath);
@@ -85,12 +85,12 @@ export class Router {
         }
     }
 
-    navigateTo(url: string) {
+    navigateTo(url: string): void {
         history.pushState({}, "", url);
         this.handle();
     }
 
-    navigateToSplash() {
+    navigateToSplash(): void {
         this.navigateTo(this.basePath);
     }
 }

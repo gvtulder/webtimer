@@ -26,7 +26,7 @@ export class SplashDisplay {
             'input[type="submit"]',
         ) as HTMLInputElement;
 
-        const h = () => {
+        const h = (): void => {
             this.cleanString();
         };
         input.addEventListener("keydown", h);
@@ -46,7 +46,7 @@ export class SplashDisplay {
         this.button = button;
     }
 
-    activate(key: string) {
+    activate(key: string): void {
         if (key) {
             this.input.value = key;
             this.cleanString();

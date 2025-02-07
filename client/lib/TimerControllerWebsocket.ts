@@ -46,10 +46,10 @@ export class TimerControllerWebsocket implements TimerController {
      * Connect to the timer server at the given URL.
      * @param url a websocket URL
      */
-    connect(url: string) {
+    connect(url: string): void {
         this.url = url;
         this.ws = new WebSocket(this.url);
-        const reconnect = () => {
+        const reconnect = (): void => {
             this.ws.close();
             this.connect(url);
         };
@@ -102,15 +102,15 @@ export class TimerControllerWebsocket implements TimerController {
         }
     }
 
-    private send(msg: unknown) {
+    private send(msg: unknown): void {
         this.ws.send(encoder.encode(msg));
     }
 
-    setRemainingSeconds(seconds: number) {
+    setRemainingSeconds(seconds: number): void {
         this.send({ cmd: "set", sec: seconds });
     }
 
-    addRemainingSeconds(seconds: number) {
+    addRemainingSeconds(seconds: number): void {
         if (this.lastEvent) {
             if (seconds < 0 && this.lastEvent.remainingSeconds == 0) {
                 return;
@@ -129,27 +129,27 @@ export class TimerControllerWebsocket implements TimerController {
         this.send({ cmd: "add", sec: seconds });
     }
 
-    startTimer() {
+    startTimer(): void {
         this.send({ cmd: "start" });
     }
 
-    pauseTimer() {
+    pauseTimer(): void {
         this.send({ cmd: "pause" });
     }
 
-    resetTimer() {
+    resetTimer(): void {
         this.send({ cmd: "reset" });
     }
 
-    toggleBlack() {
+    toggleBlack(): void {
         this.send({ cmd: "toggleblack" });
     }
 
-    addListener(listener: TimerEventListener) {
+    addListener(listener: TimerEventListener): void {
         this.listeners.push(listener);
     }
 
-    triggerEvent(event: TimerEvent) {
+    triggerEvent(event: TimerEvent): void {
         this.lastEvent = event;
         for (const listener of this.listeners) {
             listener(event);
