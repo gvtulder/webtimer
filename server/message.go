@@ -21,26 +21,30 @@ import (
 
 //go:generate msgp
 
+// A VersionMessage (in msgpack format) is sent to the client to communicate the server version.
 type VersionMessage struct {
-	Version string `msg:"version"`
+	Version string `msg:"version"` // the server version string
 }
 
+// A TimerStateMessage (in msgpack format) is sent to the client to communicate the current state of a timer.
 type TimerStateMessage struct {
-	Key              string `msg:"K"`
-	Active           bool   `msg:"a"`
-	Black            bool   `msg:"b"`
-	Running          bool   `msg:"r"`
-	Countdown        bool   `msg:"c"`
-	RemainingSeconds int64  `msg:"s"`
-	Clients          int    `msg:"C"`
+	Key              string `msg:"K"` // the key identifying the timer
+	Active           bool   `msg:"a"` // true if the timer is running or shows time != 0
+	Black            bool   `msg:"b"` // true if the timer is in black-screen mode
+	Countdown        bool   `msg:"c"` // true if the timer is counting down, false if counting up
+	Running          bool   `msg:"r"` // true if the timer is running
+	RemainingSeconds int64  `msg:"s"` // the number of remaining seconds
+	Clients          int    `msg:"C"` // the number of clients connected to this timer
 }
 
-type Command struct {
-	Key     string
-	Command string `msg:"cmd"`
-	Seconds int64  `msg:"sec"`
+// A CommandMessage (in msgpack format) is sent by the client to give commands.
+type CommandMessage struct {
+	Key     string // the key identifying the timer
+	Command string `msg:"cmd"` // the command to be executed
+	Seconds int64  `msg:"sec"` // if applicable, the seconds parameter for the command
 }
 
+// prepareWebsocketMessage converts a VersionMessage into a websocket.PreparedMessage that can be sent over a websocket.
 func (m *VersionMessage) prepareWebsocketMessage() (*websocket.PreparedMessage, error) {
 	b, err := m.MarshalMsg(nil)
 	if err != nil {
@@ -53,6 +57,7 @@ func (m *VersionMessage) prepareWebsocketMessage() (*websocket.PreparedMessage, 
 	return p, nil
 }
 
+// prepareWebsocketMessage converts a TimerStateMessage into a websocket.PreparedMessage that can be sent over a websocket.
 func (m *TimerStateMessage) prepareWebsocketMessage() (*websocket.PreparedMessage, error) {
 	b, err := m.MarshalMsg(nil)
 	if err != nil {

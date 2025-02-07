@@ -7,7 +7,7 @@ import (
 )
 
 // DecodeMsg implements msgp.Decodable
-func (z *Command) DecodeMsg(dc *msgp.Reader) (err error) {
+func (z *CommandMessage) DecodeMsg(dc *msgp.Reader) (err error) {
 	var field []byte
 	_ = field
 	var zb0001 uint32
@@ -54,7 +54,7 @@ func (z *Command) DecodeMsg(dc *msgp.Reader) (err error) {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z Command) EncodeMsg(en *msgp.Writer) (err error) {
+func (z CommandMessage) EncodeMsg(en *msgp.Writer) (err error) {
 	// map header, size 3
 	// write "Key"
 	err = en.Append(0x83, 0xa3, 0x4b, 0x65, 0x79)
@@ -90,7 +90,7 @@ func (z Command) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // MarshalMsg implements msgp.Marshaler
-func (z Command) MarshalMsg(b []byte) (o []byte, err error) {
+func (z CommandMessage) MarshalMsg(b []byte) (o []byte, err error) {
 	o = msgp.Require(b, z.Msgsize())
 	// map header, size 3
 	// string "Key"
@@ -106,7 +106,7 @@ func (z Command) MarshalMsg(b []byte) (o []byte, err error) {
 }
 
 // UnmarshalMsg implements msgp.Unmarshaler
-func (z *Command) UnmarshalMsg(bts []byte) (o []byte, err error) {
+func (z *CommandMessage) UnmarshalMsg(bts []byte) (o []byte, err error) {
 	var field []byte
 	_ = field
 	var zb0001 uint32
@@ -154,7 +154,7 @@ func (z *Command) UnmarshalMsg(bts []byte) (o []byte, err error) {
 }
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z Command) Msgsize() (s int) {
+func (z CommandMessage) Msgsize() (s int) {
 	s = 1 + 4 + msgp.StringPrefixSize + len(z.Key) + 4 + msgp.StringPrefixSize + len(z.Command) + 4 + msgp.Int64Size
 	return
 }
@@ -195,16 +195,16 @@ func (z *TimerStateMessage) DecodeMsg(dc *msgp.Reader) (err error) {
 				err = msgp.WrapError(err, "Black")
 				return
 			}
-		case "r":
-			z.Running, err = dc.ReadBool()
-			if err != nil {
-				err = msgp.WrapError(err, "Running")
-				return
-			}
 		case "c":
 			z.Countdown, err = dc.ReadBool()
 			if err != nil {
 				err = msgp.WrapError(err, "Countdown")
+				return
+			}
+		case "r":
+			z.Running, err = dc.ReadBool()
+			if err != nil {
+				err = msgp.WrapError(err, "Running")
 				return
 			}
 		case "s":
@@ -263,16 +263,6 @@ func (z *TimerStateMessage) EncodeMsg(en *msgp.Writer) (err error) {
 		err = msgp.WrapError(err, "Black")
 		return
 	}
-	// write "r"
-	err = en.Append(0xa1, 0x72)
-	if err != nil {
-		return
-	}
-	err = en.WriteBool(z.Running)
-	if err != nil {
-		err = msgp.WrapError(err, "Running")
-		return
-	}
 	// write "c"
 	err = en.Append(0xa1, 0x63)
 	if err != nil {
@@ -281,6 +271,16 @@ func (z *TimerStateMessage) EncodeMsg(en *msgp.Writer) (err error) {
 	err = en.WriteBool(z.Countdown)
 	if err != nil {
 		err = msgp.WrapError(err, "Countdown")
+		return
+	}
+	// write "r"
+	err = en.Append(0xa1, 0x72)
+	if err != nil {
+		return
+	}
+	err = en.WriteBool(z.Running)
+	if err != nil {
+		err = msgp.WrapError(err, "Running")
 		return
 	}
 	// write "s"
@@ -319,12 +319,12 @@ func (z *TimerStateMessage) MarshalMsg(b []byte) (o []byte, err error) {
 	// string "b"
 	o = append(o, 0xa1, 0x62)
 	o = msgp.AppendBool(o, z.Black)
-	// string "r"
-	o = append(o, 0xa1, 0x72)
-	o = msgp.AppendBool(o, z.Running)
 	// string "c"
 	o = append(o, 0xa1, 0x63)
 	o = msgp.AppendBool(o, z.Countdown)
+	// string "r"
+	o = append(o, 0xa1, 0x72)
+	o = msgp.AppendBool(o, z.Running)
 	// string "s"
 	o = append(o, 0xa1, 0x73)
 	o = msgp.AppendInt64(o, z.RemainingSeconds)
@@ -370,16 +370,16 @@ func (z *TimerStateMessage) UnmarshalMsg(bts []byte) (o []byte, err error) {
 				err = msgp.WrapError(err, "Black")
 				return
 			}
-		case "r":
-			z.Running, bts, err = msgp.ReadBoolBytes(bts)
-			if err != nil {
-				err = msgp.WrapError(err, "Running")
-				return
-			}
 		case "c":
 			z.Countdown, bts, err = msgp.ReadBoolBytes(bts)
 			if err != nil {
 				err = msgp.WrapError(err, "Countdown")
+				return
+			}
+		case "r":
+			z.Running, bts, err = msgp.ReadBoolBytes(bts)
+			if err != nil {
+				err = msgp.WrapError(err, "Running")
 				return
 			}
 		case "s":

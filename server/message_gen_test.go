@@ -9,8 +9,8 @@ import (
 	"github.com/tinylib/msgp/msgp"
 )
 
-func TestMarshalUnmarshalCommand(t *testing.T) {
-	v := Command{}
+func TestMarshalUnmarshalCommandMessage(t *testing.T) {
+	v := CommandMessage{}
 	bts, err := v.MarshalMsg(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -32,8 +32,8 @@ func TestMarshalUnmarshalCommand(t *testing.T) {
 	}
 }
 
-func BenchmarkMarshalMsgCommand(b *testing.B) {
-	v := Command{}
+func BenchmarkMarshalMsgCommandMessage(b *testing.B) {
+	v := CommandMessage{}
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -41,8 +41,8 @@ func BenchmarkMarshalMsgCommand(b *testing.B) {
 	}
 }
 
-func BenchmarkAppendMsgCommand(b *testing.B) {
-	v := Command{}
+func BenchmarkAppendMsgCommandMessage(b *testing.B) {
+	v := CommandMessage{}
 	bts := make([]byte, 0, v.Msgsize())
 	bts, _ = v.MarshalMsg(bts[0:0])
 	b.SetBytes(int64(len(bts)))
@@ -53,8 +53,8 @@ func BenchmarkAppendMsgCommand(b *testing.B) {
 	}
 }
 
-func BenchmarkUnmarshalCommand(b *testing.B) {
-	v := Command{}
+func BenchmarkUnmarshalCommandMessage(b *testing.B) {
+	v := CommandMessage{}
 	bts, _ := v.MarshalMsg(nil)
 	b.ReportAllocs()
 	b.SetBytes(int64(len(bts)))
@@ -67,17 +67,17 @@ func BenchmarkUnmarshalCommand(b *testing.B) {
 	}
 }
 
-func TestEncodeDecodeCommand(t *testing.T) {
-	v := Command{}
+func TestEncodeDecodeCommandMessage(t *testing.T) {
+	v := CommandMessage{}
 	var buf bytes.Buffer
 	msgp.Encode(&buf, &v)
 
 	m := v.Msgsize()
 	if buf.Len() > m {
-		t.Log("WARNING: TestEncodeDecodeCommand Msgsize() is inaccurate")
+		t.Log("WARNING: TestEncodeDecodeCommandMessage Msgsize() is inaccurate")
 	}
 
-	vn := Command{}
+	vn := CommandMessage{}
 	err := msgp.Decode(&buf, &vn)
 	if err != nil {
 		t.Error(err)
@@ -91,8 +91,8 @@ func TestEncodeDecodeCommand(t *testing.T) {
 	}
 }
 
-func BenchmarkEncodeCommand(b *testing.B) {
-	v := Command{}
+func BenchmarkEncodeCommandMessage(b *testing.B) {
+	v := CommandMessage{}
 	var buf bytes.Buffer
 	msgp.Encode(&buf, &v)
 	b.SetBytes(int64(buf.Len()))
@@ -105,8 +105,8 @@ func BenchmarkEncodeCommand(b *testing.B) {
 	en.Flush()
 }
 
-func BenchmarkDecodeCommand(b *testing.B) {
-	v := Command{}
+func BenchmarkDecodeCommandMessage(b *testing.B) {
+	v := CommandMessage{}
 	var buf bytes.Buffer
 	msgp.Encode(&buf, &v)
 	b.SetBytes(int64(buf.Len()))

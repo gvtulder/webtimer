@@ -24,6 +24,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// addCacheHeaders wraps an http.Handler to add a Cache-Control header to disable caching of the response.
 func addCacheHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache, no-store, must-revalidate")
@@ -31,6 +32,7 @@ func addCacheHeaders(next http.Handler) http.Handler {
 	})
 }
 
+// RunServer starts a http.Server to server the application and WebSocket.
 func RunServer(addr string, frontend fs.FS, logger *log.Logger, version string) {
 	hub := newHub(logger, version)
 	go hub.run()

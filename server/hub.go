@@ -28,13 +28,16 @@ const CLEANUP_INTERVAL = 300
 // remove stale sessions after at least n seconds since the last client left
 const CLEANUP_DELAY = 600
 
+// A Session represents a timer session with a Timer followed by one or more Clients.
+//
+// The session runs a goroutine that broadcasts timer events to the clients.
 type Session struct {
-	key            string
-	timer          *Timer
-	watch          *TimerWatch
-	done           chan struct{}
-	clients        map[*Client]struct{}
-	lastDisconnect int64
+	key            string               // the key identifying the timer
+	timer          *Timer               // the Timer
+	watch          *TimerWatch          // the TimerWatch for the Timer
+	done           chan struct{}        // channel to stop the Session's goroutine
+	clients        map[*Client]struct{} // the clients connected to this timer
+	lastDisconnect int64                // the time when the last remaining client disconnected
 }
 
 func newSession(h *Hub, key string) *Session {
@@ -66,6 +69,7 @@ func newSession(h *Hub, key string) *Session {
 	return session
 }
 
+// deleteClient removes a client from this session.
 func (s *Session) deleteClient(client *Client) {
 	delete(s.clients, client)
 	if len(s.clients) == 0 {
@@ -73,23 +77,26 @@ func (s *Session) deleteClient(client *Client) {
 	}
 }
 
+// stop stops the TimerWatch and ends the session's goroutine.
 func (s *Session) stop() {
 	s.watch.Stop()
 	s.done <- struct{}{}
 }
 
+// The Hub manages the list of timer Sessions and the Clients connected to the WebSocket.
 type Hub struct {
-	logger         *log.Logger
-	broadcast      chan TimerStateMessage
-	commands       chan Command
-	sessions       map[string]*Session
-	clients        map[*Client]struct{}
-	register       chan *Client
-	unregister     chan *Client
-	cleanup        *time.Ticker
-	welcomeMessage *websocket.PreparedMessage
+	logger         *log.Logger                // the server's logger
+	broadcast      chan TimerStateMessage     // channel for messages to be sent to clients
+	commands       chan CommandMessage        // channel for commands sent by the clients
+	sessions       map[string]*Session        // set of running sessions mapped by key
+	clients        map[*Client]struct{}       // set of connected clients
+	register       chan *Client               // channel where new clients are registered
+	unregister     chan *Client               // channel where disconnecting clients are unregistered
+	cleanup        *time.Ticker               // running a regular cleanup process to remove stale timers
+	welcomeMessage *websocket.PreparedMessage // the welcome message sent to all new clients
 }
 
+// newHub creates a new Hub to manage clients and timer sessions.
 func newHub(logger *log.Logger, version string) *Hub {
 	welcomeMessage := VersionMessage{Version: version}
 	p, err := welcomeMessage.prepareWebsocketMessage()
@@ -100,7 +107,7 @@ func newHub(logger *log.Logger, version string) *Hub {
 	return &Hub{
 		logger:         logger,
 		broadcast:      make(chan TimerStateMessage),
-		commands:       make(chan Command),
+		commands:       make(chan CommandMessage),
 		sessions:       make(map[string]*Session),
 		register:       make(chan *Client),
 		unregister:     make(chan *Client),
@@ -109,6 +116,7 @@ func newHub(logger *log.Logger, version string) *Hub {
 	}
 }
 
+// getSession returns or creates the session for the given key.
 func (h *Hub) getSession(key string) *Session {
 	session, ok := h.sessions[key]
 	if !ok {
@@ -118,6 +126,7 @@ func (h *Hub) getSession(key string) *Session {
 	return session
 }
 
+// sendUpdate composes a TimerStateMessage and queues it for the clients.
 func (h *Hub) sendUpdate(session *Session) {
 	s := session.timer.State()
 	msg := TimerStateMessage{
@@ -132,6 +141,7 @@ func (h *Hub) sendUpdate(session *Session) {
 	h.sendToClients(msg)
 }
 
+// sendToClients sends the TimerStateMessage to the clients observing the timer.
 func (h *Hub) sendToClients(msg TimerStateMessage) {
 	p, err := msg.prepareWebsocketMessage()
 	if err != nil {
@@ -152,10 +162,12 @@ func (h *Hub) sendToClients(msg TimerStateMessage) {
 	}
 }
 
+// run starts the Hub. The Hub processes client connections/disconnections and timer events.
 func (h *Hub) run() {
 	h.cleanup = time.NewTicker(CLEANUP_INTERVAL * time.Second)
 	for {
 		select {
+		// handle connecting clients
 		case client := <-h.register:
 			h.clients[client] = struct{}{}
 			session := h.getSession(client.key)
@@ -164,6 +176,7 @@ func (h *Hub) run() {
 			client.send <- h.welcomeMessage
 			h.sendUpdate(session)
 
+		// handle disconnecting clients
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				h.logger.Printf("Closing connection [%s]: %s\n", client.key, client.conn.RemoteAddr())
@@ -174,9 +187,11 @@ func (h *Hub) run() {
 				h.sendUpdate(session)
 			}
 
+		// handle timer state updates
 		case msg := <-h.broadcast:
 			h.sendToClients(msg)
 
+		// handle commands from clients
 		case cmd := <-h.commands:
 			timer := h.getSession(cmd.Key).timer
 			switch cmd.Command {
@@ -198,6 +213,7 @@ func (h *Hub) run() {
 				timer.ToggleBlack()
 			}
 
+		// periodically remove sessions without active clients
 		case <-h.cleanup.C:
 			h.logger.Println("Cleaning time!")
 			for key, session := range h.sessions {

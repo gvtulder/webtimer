@@ -86,7 +86,7 @@ func (c *Client) readPump() {
 			log.Printf("expected binary message, but found %v", messageType)
 			continue
 		}
-		var command Command
+		var command CommandMessage
 		left, err := command.UnmarshalMsg(msg)
 		if err != nil {
 			log.Printf("error decoding message: %v", err)
