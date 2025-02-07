@@ -32,6 +32,7 @@ var Version = "UNDEFINED"
 
 var addr string
 var frontendPath string
+var showVersion bool
 var showLicense bool
 
 //go:embed dist/frontend/index.html
@@ -44,6 +45,7 @@ var embedFrontend embed.FS
 func init() {
 	flag.StringVar(&addr, "addr", ":8000", "http service address")
 	flag.StringVar(&frontendPath, "web", "", "frontend resources path")
+	flag.BoolVar(&showVersion, "version", false, "show version")
 	flag.BoolVar(&showLicense, "license", false, "show license information")
 	flag.Parse()
 }
@@ -80,6 +82,11 @@ func listAddresses(logger *log.Logger) []net.IP {
 
 func main() {
 	logger := log.New(os.Stdout, "", 0)
+
+	if showVersion {
+		logger.Printf("webtimer.cc version %s", Version)
+		return
+	}
 
 	logger.Printf("\n"+
 		"  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"+
