@@ -19,6 +19,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get version string
+        id: get-version-string
+        run: |
+          git fetch --tags --force
+          version="$(git describe --dirty)"
+          echo "Version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -131,6 +139,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get version string
+        id: get-version-string
+        run: |
+          git fetch --tags --force
+          version="$(git describe --dirty)"
+          echo "Version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+
       - name: Build snap
         id: snapcraft
         uses: canonical/action-build@v1
@@ -152,7 +168,7 @@ jobs:
       - build-snap
 
     permissions:
-      contents: read
+      contents: write
       packages: write
       attestations: write
       id-token: write
