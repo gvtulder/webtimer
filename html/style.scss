@@ -36,6 +36,11 @@ $qr-fg-color: hsl(0deg, 0%, 0%);
 
 $splash-input-text-bg-color: hsl(0deg, 0%, 80%);
 
+$layout-breakpoint-width-500px: 500px;
+$layout-breakpoint-width-700px: 700px;
+$layout-breakpoint-width-800px: 800px;
+$layout-breakpoint-height-580px: 580px;
+
 /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'); */
 /* latin */
 @font-face {
@@ -95,84 +100,108 @@ body {
   background: $timer-display-bg-color;
   cursor: pointer;
   position: relative;
-}
 
-@media screen and (orientation: landscape) {
-  .timer-display {
+  @media screen and (orientation: landscape) {
     margin: 5vh 5vh 0 5vh;
+  }
+
+  .card {
+    background: $timer-card-bg-color;
+    opacity: 1;
+    transition: opacity 1s;
+    width: 100%;
+    height: 100%;
+    /* height of .timer-display .menu */
+    padding-bottom: 55px;
+    box-sizing: border-box;
+    transition:
+      opacity 0.5s,
+      background-color 0.5s ease-in-out,
+      color 0.5s ease-in-out;
+
+    @media (max-height: $layout-breakpoint-height-580px) {
+      /* bottom menu is hidden */
+      padding-bottom: 0;
+    }
+  }
+
+  .time {
+    height: 100%;
+    margin: 0 10vw;
+    color: $timer-card-fg-color;
+    font-optical-sizing: auto;
+    font-weight: 600;
+  }
+
+  &.black .card {
+    opacity: 0.25;
+  }
+
+  &.warning {
+    .card {
+      background: $timer-card-warning-bg-color;
+    }
+    .time {
+      color: $timer-card-warning-fg-color;
+    }
+  }
+
+  &.timeout {
+    .card {
+      background: $timer-card-timeout-bg-color;
+    }
+    .time {
+      color: $timer-card-timeout-fg-color;
+    }
+  }
+
+  .connecting {
+    display: none;
+    background: $timer-display-connecting-bg-color;
+    border-radius: 5px;
+    font-size: 16px;
+    color: $timer-display-connecting-fg-color;
+    padding: 5px 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    &.disconnected {
+      display: initial;
+    }
   }
 }
 
-.timer-display .card {
-  background: $timer-card-bg-color;
-  opacity: 1;
-  transition: opacity 1s;
-  width: 100%;
-  height: 100%;
-  padding-bottom: 55px;
-  box-sizing: border-box;
+/******************************
+ * What to do on full screen?
+ */
+
+.fullscreen {
+  .timer-display {
+    cursor: none;
+    margin: 0;
+
+    .card {
+      padding-bottom: 0;
+    }
+
+    &.black .card {
+      opacity: 0;
+    }
+
+    .menu {
+      display: none;
+    }
+  }
+
+  .controls-display {
+    display: none;
+  }
 }
 
-.fullscreen .timer-display {
-  cursor: none;
-  margin: 0;
-}
-
-.fullscreen .timer-display .card {
-  padding-bottom: 0;
-}
-
-.timer-display.black .card {
-  opacity: 0.25;
-}
-
-.fullscreen .timer-display.black .card {
-  opacity: 0;
-}
-
-.timer-display.running .card {
-  transition:
-    opacity 0.5s,
-    background-color 0.5s ease-in-out,
-    color 0.5s ease-in-out;
-}
-
-.timer-display .time {
-  height: 100%;
-  margin: 0 10vw;
-  color: $timer-card-fg-color;
-  font-optical-sizing: auto;
-  font-weight: 600;
-}
-
-.timer-display.countdown.warning .card {
-  background: $timer-card-warning-bg-color;
-}
-.timer-display.countdown.timeout .card {
-  background: $timer-card-timeout-bg-color;
-}
-.timer-display.countdown.warning .time {
-  color: $timer-card-warning-fg-color;
-}
-.timer-display.countdown.timeout .time {
-  color: $timer-card-timeout-fg-color;
-}
-
-.timer-display .connecting {
-  display: none;
-  background: $timer-display-connecting-bg-color;
-  border-radius: 5px;
-  font-size: 16px;
-  color: $timer-display-connecting-fg-color;
-  padding: 5px 10px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-.timer-display .connecting.disconnected {
-  display: initial;
-}
+/******************************
+ * Control buttons.
+ */
 
 .controls-display {
   display: flex;
@@ -180,42 +209,128 @@ body {
   margin: 2vh 1vh;
 }
 
-.fullscreen .controls-display {
-  display: none;
-}
-
-/******************************
- * Control buttons.
- */
-
 .controls {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   margin: 10px;
+
+  button {
+    display: inline-block;
+    padding: 0;
+    border-radius: 10px;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    background: $controls-button-fill-color;
+    color: $controls-button-text-color;
+
+    &:active {
+      background: $controls-button-fill-hover-color;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background: $controls-button-fill-hover-color;
+      }
+    }
+  }
+
+  button.disabled {
+    display: none;
+  }
+
+  button.on {
+    outline: 5px solid $controls-button-fill-color;
+    outline-offset: 5px;
+
+    &.on:active {
+      outline-color: $controls-button-fill-hover-color;
+    }
+
+    @media (hover: hover) {
+      &.on:hover {
+        outline-color: $controls-button-fill-hover-color;
+      }
+    }
+  }
 }
 
-.controls button {
-  display: inline-block;
-  padding: 0;
-  border-radius: 10px;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  background: $controls-button-fill-color;
-  color: $controls-button-text-color;
+/******************************
+* Main buttons: reset / play / black.
+*/
+
+.controls.main {
+  button {
+    margin: 0 5px;
+    flex-shrink: 0;
+    flex-grow: 0;
+
+    @media (min-width: $layout-breakpoint-width-500px) {
+      margin: 0 10px;
+    }
+
+    &.icon {
+      width: 95px;
+      height: 95px;
+      border-radius: 50%;
+
+      svg {
+        height: 45px;
+        vertical-align: top;
+      }
+    }
+
+    &.button-start,
+    &.button-pause {
+      width: 120px;
+      height: 120px;
+
+      svg {
+        height: 60px;
+      }
+    }
+
+    &.button-start svg {
+      padding-left: 10px;
+    }
+  }
 }
 
-.controls button.disabled {
-  display: none;
+/******************************
+* Secondary buttons: add/subtract time.
+*/
+
+.controls.secondary {
+  button {
+    background: $controls-button-secondary-fill-color;
+
+    &:active {
+      background: $controls-button-secondary-fill-hover-color;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background: $controls-button-secondary-fill-hover-color;
+      }
+    }
+  }
+
+  @media (min-width: $layout-breakpoint-width-700px) {
+    .secondarySet {
+      border-right: 1px solid $controls-button-secondary-fill-color;
+      padding-right: 20px;
+      margin-right: 15px;
+    }
+  }
 }
 
-.controls button.on {
-  outline: 5px solid $controls-button-fill-color;
-  outline-offset: 5px;
-}
+/******************************
+ * Drop-down lists for secondary controls.
+ */
 
 .button-list {
   position: relative;
@@ -225,174 +340,86 @@ body {
   background: $body-bg-color;
   font-size: 1px;
   white-space: nowrap;
-}
 
-.button-list button {
-  display: inline-block;
-  width: 130px;
-  height: 40px;
-}
-
-.button-list button.current {
-  border-radius: 10px 0 0 10px;
-}
-
-.button-list button.up {
-  width: 39px;
-  border-radius: 0 10px 10px 0;
-  border-left: 1px solid $body-bg-color;
-}
-
-.button-list button.up svg {
-  height: 15px;
-}
-
-.button-list ul {
-  position: absolute;
-  bottom: 45px;
-  left: 0;
-  border-radius: 15px 15px 0 0;
-  background: $body-bg-color;
-}
-
-.button-list ul,
-.button-list li {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.button-list li {
-  margin: 5px;
-}
-
-.button-list ul {
-  display: none;
-  padding-bottom: 5px;
-}
-
-.button-list li:last-child {
-  padding-bottom: 10px;
-  border-bottom: 1px solid $controls-button-secondary-fill-color;
-}
-
-.button-list.expanded ul {
-  display: block;
-}
-
-@media screen and (min-width: 800px) {
-  .controls button {
-    font-size: 24px;
-  }
-
-  .button-list {
+  @media (min-width: $layout-breakpoint-width-800px) {
     height: 50px;
   }
 
-  .button-list button {
-    width: 150px;
-    height: 50px;
-  }
-
-  .button-list button.up {
-    width: 59px;
-  }
-
-  .button-list ul {
-    bottom: 55px;
-  }
-}
-
-.controls.main button {
-  margin: 0 10px;
-  flex-shrink: 0;
-  flex-grow: 0;
-}
-
-.controls.main button.icon {
-  width: 95px;
-  height: 95px;
-  border-radius: 50%;
-}
-
-.controls.main button.icon.button-start,
-.controls.main button.icon.button-pause {
-  width: 120px;
-  height: 120px;
-}
-
-.controls.main button.icon svg {
-  height: 45px;
-  vertical-align: top;
-}
-
-.controls.main button.icon.button-start svg,
-.controls.main button.icon.button-pause svg {
-  height: 60px;
-}
-
-.controls.main button.icon.button-start svg {
-  padding-left: 10px;
-}
-
-.controls.secondary button {
-  background: $controls-button-secondary-fill-color;
-}
-
-.controls button:active,
-.controls.secondary button:active {
-  background: $controls-button-fill-hover-color;
-}
-.controls.secondary button:active {
-  background: $controls-button-secondary-fill-hover-color;
-}
-.controls button.on:active {
-  outline-color: $controls-button-fill-hover-color;
-}
-@media (hover: hover) {
-  .controls button:hover {
-    background: $controls-button-fill-hover-color;
-  }
-
-  .controls.secondary button:hover {
-    background: $controls-button-secondary-fill-hover-color;
-  }
-
-  .controls button.on:hover {
-    outline-color: $controls-button-fill-hover-color;
-  }
-}
-
-@media screen and (min-width: 700px) {
-  .controls.secondary .secondarySet {
-    border-right: 1px solid $controls-button-secondary-fill-color;
-    padding-right: 20px;
-    margin-right: 15px;
-  }
-}
-
-@media screen and (max-width: 700px) {
-  .button-list button {
-    width: 100px;
-  }
-}
-
-@media screen and (max-width: 500px) {
-  .button-list button {
+  button {
+    display: inline-block;
     width: 70px;
+    height: 40px;
     font-size: 16px;
+
+    &.current {
+      border-radius: 10px 0 0 10px;
+    }
+
+    &.up {
+      width: 34px;
+      border-radius: 0 10px 10px 0;
+      border-left: 1px solid $body-bg-color;
+
+      svg {
+        height: 12px;
+      }
+    }
+
+    @media (min-width: $layout-breakpoint-width-500px) {
+      width: 100px;
+      font-size: 20px;
+
+      &.up {
+        width: 39px;
+
+        svg {
+          width: 15px;
+        }
+      }
+    }
+
+    @media (min-width: $layout-breakpoint-width-700px) {
+      width: 130px;
+    }
+
+    @media (min-width: $layout-breakpoint-width-800px) {
+      width: 150px;
+      height: 50px;
+      font-size: 24px;
+
+      &.up {
+        width: 59px;
+      }
+    }
   }
 
-  .button-list button.up {
-    width: 34px;
+  ul {
+    position: absolute;
+    bottom: 45px;
+    left: 0;
+    margin: 0;
+    padding: 0 0 5px 0;
+    border-radius: 15px 15px 0 0;
+    background: $body-bg-color;
+    list-style: none;
+    display: none;
+
+    @media (min-width: $layout-breakpoint-width-800px) {
+      bottom: 55px;
+    }
   }
 
-  .button-list button.up svg {
-    width: 12px;
+  &.expanded ul {
+    display: block;
   }
 
-  .controls.main button {
-    margin: 0 5px;
+  li {
+    margin: 5px;
+
+    &:last-child {
+      padding-bottom: 10px;
+      border-bottom: 1px solid $controls-button-secondary-fill-color;
+    }
   }
 }
 
@@ -413,24 +440,25 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-.qr.visible {
-  display: flex;
-}
 
-.qr svg {
-  flex-shrink: 1;
-  width: 100%;
-  height: 100%;
-  padding: 2vh 2vw 1vh 2vw;
-  max-width: 80%;
-  max-height: 60%;
-  shape-rendering: crispEdges;
-}
+  &.visible {
+    display: flex;
+  }
 
-.qr p {
-  margin: 1vh 1vw;
-  font-size: 20px;
+  svg {
+    flex-shrink: 1;
+    width: 100%;
+    height: 100%;
+    padding: 2vh 2vw 1vh 2vw;
+    max-width: 80%;
+    max-height: 60%;
+    shape-rendering: crispEdges;
+  }
+
+  p {
+    margin: 1vh 1vw;
+    font-size: 20px;
+  }
 }
 
 /******************************
@@ -449,83 +477,69 @@ body {
   align-items: center;
   background: $timer-menu-bg-color;
   cursor: default;
-}
 
-.timer-display .menu .left,
-.timer-display .menu .right {
-  display: flex;
-  flex-direction: row;
-  padding: 5px;
-  width: 110px;
-}
-
-.timer-display .menu .right {
-  justify-content: flex-end;
-}
-
-.timer-display .menu .status {
-  height: fit-content;
-  font-size: 20px;
-  color: $timer-menu-button-status-color;
-}
-
-@media screen and (max-width: 500px) {
-  .timer-display .menu .status {
-    font-size: 16px;
-  }
-
-  .timer-display .menu .left,
-  .timer-display .menu .right {
-    width: auto;
-  }
-}
-
-@media screen and (max-height: 580px) {
-  .timer-display .menu,
-  .timer-display.countdown.warning .menu,
-  .timer-display.countdown.timeout .menu {
+  @media (max-height: $layout-breakpoint-height-580px) {
     background: transparent;
   }
 
-  .timer-display .menu .status {
-    display: none;
+  .left,
+  .right {
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+
+    @media (min-width: $layout-breakpoint-width-500px) {
+      width: 110px;
+    }
   }
 
-  .timer-display .card {
-    padding-bottom: 0;
+  .right {
+    justify-content: flex-end;
+  }
+
+  .status {
+    height: fit-content;
+    font-size: 16px;
+    color: $timer-menu-button-status-color;
+
+    @media (min-width: $layout-breakpoint-width-500px) {
+      font-size: 20px;
+    }
+
+    @media (max-height: $layout-breakpoint-height-580px) {
+      display: none;
+    }
+  }
+
+  button {
+    width: 26px;
+    height: 26px;
+    display: block;
+    background: $timer-menu-button-fill-color;
+    fill: $timer-menu-button-text-color;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    box-sizing: content-box;
+    margin: 5px;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        background: $timer-menu-button-hover-fill-color;
+        fill: $timer-menu-button-hover-text-color;
+      }
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 
-.fullscreen .timer-display .menu,
 .timer-display .qr.visible + .menu {
   display: none;
-}
-
-.timer-display .menu button {
-  width: 26px;
-  height: 26px;
-  display: block;
-  background: $timer-menu-button-fill-color;
-  fill: $timer-menu-button-text-color;
-  padding: 5px;
-  border: none;
-  border-radius: 5px;
-  box-sizing: content-box;
-  margin: 5px;
-  cursor: pointer;
-}
-
-@media (hover: hover) {
-  .timer-display .menu button:hover {
-    background: $timer-menu-button-hover-fill-color;
-    fill: $timer-menu-button-hover-text-color;
-  }
-}
-
-.timer-display .menu svg {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 
 /******************************
@@ -537,43 +551,43 @@ body {
   flex-direction: column;
   justify-content: center;
   height: 100%;
-}
 
-.splash-display p {
-  font-size: 30px;
-  text-align: center;
-  color: $body-fg-color;
-  padding: 0 10px;
-}
-
-.splash-display input {
-  font-size: 30px;
-  margin: 5px;
-  padding: 10px;
-  text-align: center;
-}
-
-.splash-display input[type="text"] {
-  background: $splash-input-text-bg-color;
-}
-
-@media screen and (max-width: 500px) {
-  .splash-display p {
-    font-size: 20px;
+  p {
+    font-size: 30px;
+    text-align: center;
+    color: $body-fg-color;
+    padding: 0 10px;
   }
 
-  .splash-display p:last-child {
-    display: flex;
-    flex-direction: row;
+  input {
+    font-size: 30px;
+    margin: 5px;
+    padding: 10px;
+    text-align: center;
   }
 
-  .splash-display input {
-    display: block;
-    font-size: 20px;
+  input[type="text"] {
+    background: $splash-input-text-bg-color;
   }
 
-  .splash-display input[type="text"] {
-    width: 100%;
-    flex-shrink: 1;
+  @media (max-width: $layout-breakpoint-width-500px) {
+    p {
+      font-size: 20px;
+    }
+
+    p:last-child {
+      display: flex;
+      flex-direction: row;
+    }
+
+    input {
+      display: block;
+      font-size: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      flex-shrink: 1;
+    }
   }
 }

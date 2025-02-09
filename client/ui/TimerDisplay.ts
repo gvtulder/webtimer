@@ -187,12 +187,14 @@ export class TimerDisplay {
             this.element.classList.toggle(
                 "timeout",
                 event.active &&
+                    event.countdown &&
                     event.remainingSeconds !== null &&
                     event.remainingSeconds <= 0,
             );
             this.element.classList.toggle(
                 "warning",
                 event.active &&
+                    event.countdown &&
                     event.remainingSeconds !== null &&
                     event.remainingSeconds <= 60 &&
                     event.remainingSeconds > 0,
