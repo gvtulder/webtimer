@@ -44,12 +44,6 @@ If you wish, you can run your own webtimer server locally.
    | [Linux (AMD64)](https://github.com/gvtulder/webtimer/releases/latest/download/webtimer)             | [Windows (AMD64)](https://github.com/gvtulder/webtimer/releases/latest/download/webtimer.exe)       | [mac OS (AMD64)](https://github.com/gvtulder/webtimer/releases/latest/download/webtimer_darwin-amd64) |
    | [Linux (ARM64)](https://github.com/gvtulder/webtimer/releases/latest/download/webtimer_linux-arm64) | [Windows (ARM64)](https://github.com/gvtulder/webtimer/releases/latest/download/webtimer_arm64.exe) | [mac OS (ARM64)](https://github.com/gvtulder/webtimer/releases/latest/download/webtimer_darwin-arm64) |
 
-   On Linux, you can also install the [snap package](https://snapcraft.io/webtimer) with
-
-   ```bash
-   snap install webtimer
-   ```
-
 2. Start the server.
 
 3. Open the webtimer in your browser by accessing <http://localhost:8000/>.
