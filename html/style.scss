@@ -1,4 +1,40 @@
+@use "sass:color";
+
 @import url("normalize.css/normalize.css");
+
+$body-bg-color: hsl(0deg, 0%, 18%);
+$body-fg-color: hsl(0deg, 0%, 50%);
+
+$controls-button-fill-color: hsl(0deg, 0%, 55%);
+$controls-button-text-color: hsl(0deg, 0%, 0%);
+$controls-button-fill-hover-color: hsl(0deg, 0%, 85%);
+
+$controls-button-secondary-fill-color: hsl(0deg, 0%, 40%);
+$controls-button-secondary-fill-hover-color: hsl(0deg, 0%, 70%);
+
+$timer-display-bg-color: hsl(0deg, 0%, 0%);
+
+$timer-card-bg-color: hsl(0deg, 0%, 0%);
+$timer-card-fg-color: hsl(0deg, 0%, 100%);
+$timer-card-warning-bg-color: hsl(45deg, 100%, 51%);
+$timer-card-warning-fg-color: hsl(0deg, 0%, 0%);
+$timer-card-timeout-bg-color: hsl(354deg 86% 32%);
+$timer-card-timeout-fg-color: hsl(0deg, 0%, 100%);
+
+$timer-menu-bg-color: hsl(0deg, 0%, 9%);
+$timer-menu-button-fill-color: hsl(0deg, 0%, 18%);
+$timer-menu-button-text-color: hsl(0deg, 0%, 40%);
+$timer-menu-button-hover-fill-color: hsl(0deg, 0%, 50%);
+$timer-menu-button-hover-text-color: hsl(0deg, 0%, 0%);
+$timer-menu-button-status-color: hsl(0deg, 0%, 30%);
+
+$timer-display-connecting-bg-color: hsl(188deg 77% 40%);
+$timer-display-connecting-fg-color: hsl(0deg, 0%, 0%);
+
+$qr-bg-color: hsl(0deg, 0%, 100%);
+$qr-fg-color: hsl(0deg, 0%, 0%);
+
+$splash-input-text-bg-color: hsl(0deg, 0%, 80%);
 
 /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'); */
 /* latin */
@@ -17,8 +53,8 @@ body {
   font-family: "Inter", sans-serif;
   font-variant-numeric: tabular-nums;
   font-size: 18px;
-  background: #333;
-  color: #777;
+  background: $body-bg-color;
+  color: $body-fg-color;
   margin: 0;
   padding: 0;
 }
@@ -56,7 +92,7 @@ body {
 .timer-display {
   height: 100%;
   margin: 5vw 5vw 0 5vw;
-  background: #000;
+  background: $timer-display-bg-color;
   cursor: pointer;
   position: relative;
 }
@@ -68,7 +104,7 @@ body {
 }
 
 .timer-display .card {
-  background: #000;
+  background: $timer-card-bg-color;
   opacity: 1;
   transition: opacity 1s;
   width: 100%;
@@ -87,7 +123,7 @@ body {
 }
 
 .timer-display.black .card {
-  opacity: 0.2;
+  opacity: 0.25;
 }
 
 .fullscreen .timer-display.black .card {
@@ -104,41 +140,30 @@ body {
 .timer-display .time {
   height: 100%;
   margin: 0 10vw;
-  color: #fff;
+  color: $timer-card-fg-color;
   font-optical-sizing: auto;
   font-weight: 600;
 }
 
 .timer-display.countdown.warning .card {
-  background: #ffc107;
+  background: $timer-card-warning-bg-color;
 }
 .timer-display.countdown.timeout .card {
-  background: #980b19;
+  background: $timer-card-timeout-bg-color;
 }
 .timer-display.countdown.warning .time {
-  color: #000;
+  color: $timer-card-warning-fg-color;
 }
-
-/*
-.fullscreen .timer-display.countdown.timeout .time span {
-  border-top: 0.05em dotted transparent;
-  border-bottom: 0.05em dotted #fff;
+.timer-display.countdown.timeout .time {
+  color: $timer-card-timeout-fg-color;
 }
-
-@media screen and (orientation: portrait) {
-  .timer-display.countdown.timeout .time span {
-    border-top: 0.05em dotted transparent;
-    border-bottom: 0.05em dotted #fff;
-  }
-}
-*/
 
 .timer-display .connecting {
   display: none;
-  background: #17a2b8;
+  background: $timer-display-connecting-bg-color;
   border-radius: 5px;
   font-size: 16px;
-  color: #000;
+  color: $timer-display-connecting-fg-color;
   padding: 5px 10px;
   position: absolute;
   top: 10px;
@@ -179,8 +204,8 @@ body {
   font-size: 20px;
   cursor: pointer;
   white-space: nowrap;
-  background: #777;
-  color: #000;
+  background: $controls-button-fill-color;
+  color: $controls-button-text-color;
 }
 
 .controls button.disabled {
@@ -188,7 +213,8 @@ body {
 }
 
 .controls button.on {
-  background: #ddd;
+  outline: 5px solid $controls-button-fill-color;
+  outline-offset: 5px;
 }
 
 .button-list {
@@ -196,7 +222,7 @@ body {
   display: block;
   height: 40px;
   padding: 5px;
-  background: #333;
+  background: $body-bg-color;
   font-size: 1px;
   white-space: nowrap;
 }
@@ -214,7 +240,7 @@ body {
 .button-list button.up {
   width: 39px;
   border-radius: 0 10px 10px 0;
-  border-left: 1px solid #333;
+  border-left: 1px solid $body-bg-color;
 }
 
 .button-list button.up svg {
@@ -226,7 +252,7 @@ body {
   bottom: 45px;
   left: 0;
   border-radius: 15px 15px 0 0;
-  background: #333;
+  background: $body-bg-color;
 }
 
 .button-list ul,
@@ -247,7 +273,7 @@ body {
 
 .button-list li:last-child {
   padding-bottom: 10px;
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid $controls-button-secondary-fill-color;
 }
 
 .button-list.expanded ul {
@@ -310,23 +336,36 @@ body {
 }
 
 .controls.secondary button {
-  background: #555;
+  background: $controls-button-secondary-fill-color;
 }
 
 .controls button:active,
 .controls.secondary button:active {
-  background: #aaa;
+  background: $controls-button-fill-hover-color;
+}
+.controls.secondary button:active {
+  background: $controls-button-secondary-fill-hover-color;
+}
+.controls button.on:active {
+  outline-color: $controls-button-fill-hover-color;
 }
 @media (hover: hover) {
-  .controls button:hover,
+  .controls button:hover {
+    background: $controls-button-fill-hover-color;
+  }
+
   .controls.secondary button:hover {
-    background: #aaa;
+    background: $controls-button-secondary-fill-hover-color;
+  }
+
+  .controls button.on:hover {
+    outline-color: $controls-button-fill-hover-color;
   }
 }
 
 @media screen and (min-width: 700px) {
   .controls.secondary .secondarySet {
-    border-right: 1px solid #555;
+    border-right: 1px solid $controls-button-secondary-fill-color;
     padding-right: 20px;
     margin-right: 15px;
   }
@@ -367,7 +406,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: $qr-bg-color;
+  fill: $qr-fg-color;
+  color: $qr-fg-color;
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -406,7 +447,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background: #3335;
+  background: $timer-menu-bg-color;
   cursor: default;
 }
 
@@ -425,7 +466,7 @@ body {
 .timer-display .menu .status {
   height: fit-content;
   font-size: 20px;
-  color: #fff3;
+  color: $timer-menu-button-status-color;
 }
 
 @media screen and (max-width: 500px) {
@@ -440,7 +481,9 @@ body {
 }
 
 @media screen and (max-height: 580px) {
-  .timer-display .menu {
+  .timer-display .menu,
+  .timer-display.countdown.warning .menu,
+  .timer-display.countdown.timeout .menu {
     background: transparent;
   }
 
@@ -462,7 +505,8 @@ body {
   width: 26px;
   height: 26px;
   display: block;
-  background: #3333;
+  background: $timer-menu-button-fill-color;
+  fill: $timer-menu-button-text-color;
   padding: 5px;
   border: none;
   border-radius: 5px;
@@ -471,13 +515,10 @@ body {
   cursor: pointer;
 }
 
-.timer-display .menu button:active {
-  background: #3336;
-}
-
 @media (hover: hover) {
   .timer-display .menu button:hover {
-    background: #3336;
+    background: $timer-menu-button-hover-fill-color;
+    fill: $timer-menu-button-hover-text-color;
   }
 }
 
@@ -485,19 +526,6 @@ body {
   display: block;
   width: 100%;
   height: 100%;
-  fill: #fff2;
-}
-
-.timer-display.countdown.warning .menu button {
-  fill: #0002;
-}
-
-.timer-display.countdown.warning .menu svg {
-  fill: #0003;
-}
-
-.timer-display.countdown.warning .menu .status {
-  color: #0004;
 }
 
 /******************************
@@ -514,7 +542,7 @@ body {
 .splash-display p {
   font-size: 30px;
   text-align: center;
-  color: #aaa;
+  color: $body-fg-color;
   padding: 0 10px;
 }
 
@@ -526,7 +554,7 @@ body {
 }
 
 .splash-display input[type="text"] {
-  background: #ccc;
+  background: $splash-input-text-bg-color;
 }
 
 @media screen and (max-width: 500px) {
