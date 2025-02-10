@@ -27,7 +27,7 @@ source-code: https://github.com/gvtulder/webtimer/
 website: https://webtimer.cc/
 adopt-info: webtimer
 
-grade: devel
+grade: stable
 confinement: strict
 
 build-snaps:
