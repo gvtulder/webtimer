@@ -153,9 +153,18 @@ jobs:
 
       - name: Build snap
         id: snapcraft
-        uses: canonical/action-build@v1
+        uses: snapcore/action-build@v1
         with:
           snapcraft-args: "--platform ${{ matrix.snap_arch }}"
+
+      - name: Publish snap
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAP_STORE_LOGIN }}
+        with:
+          snap: ${{ steps.snapcraft.outputs.snap }}
+          release: stable
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
