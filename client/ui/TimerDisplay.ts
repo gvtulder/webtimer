@@ -168,6 +168,15 @@ export class TimerDisplay {
             .replace(/^https:\/\/(?=[a-z])/, "")
             .replace(/\/$/, "");
         div.appendChild(qrp);
+        const qrClose = document.createElement("button");
+        qrClose.appendChild(
+            (
+                document.getElementById(
+                    "template-icon-x-mark",
+                ) as HTMLTemplateElement
+            ).content.cloneNode(true),
+        );
+        div.append(qrClose);
     }
 
     showTime(seconds: number): void {
