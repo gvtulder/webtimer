@@ -10,7 +10,7 @@
     "@msgpack/msgpack": "^3.1.0",
     "@types/textfit": "^2.4.5",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
-    "@typescript-eslint/parser": "^8.24.1",
+    "@typescript-eslint/parser": "^8.25.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "eslint": "^9.21.0",
