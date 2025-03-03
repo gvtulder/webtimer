@@ -17,7 +17,8 @@ updates:
       interval: "weekly"
     groups:
       go-dependencies:
-        patterns: "*"
+        patterns:
+          - "*"
 
   - package-ecosystem: "docker"
     directory: "/"
@@ -25,7 +26,8 @@ updates:
       interval: "weekly"
     groups:
       docker-dependencies:
-        patterns: "*"
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -33,4 +35,5 @@ updates:
       interval: "weekly"
     groups:
       github-dependencies:
-        patterns: "*"
+        patterns:
+          - "*"
