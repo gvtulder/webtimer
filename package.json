@@ -20,7 +20,7 @@
     "normalize.css": "^8.0.1",
     "prettier": "^3.5.2",
     "qr-svg": "^1.1.0",
-    "sass": "^1.85.0",
+    "sass": "^1.85.1",
     "sass-loader": "^16.0.5",
     "textfit": "^2.4.0",
     "ts-loader": "^9.5.2",
