@@ -1,13 +1,13 @@
 {
   "dependencies": {
-    "@msgpack/msgpack": "v3.0.0-beta4",
+    "@msgpack/msgpack": "v3.1.0",
     "normalize.css": "^8.0.1",
     "qr-svg": "^1.1.0",
     "textfit": "^2.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@msgpack/msgpack": "v3.0.0-beta4",
+    "@msgpack/msgpack": "v3.1.0",
     "@types/textfit": "^2.4.5",
     "@typescript-eslint/eslint-plugin": "^8.26.0",
     "@typescript-eslint/parser": "^8.26.0",
