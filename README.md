@@ -15,17 +15,14 @@ Visit [webtimer.cc](https://webtimer.cc/).
 ### Instructions
 
 1. Start a new timer:
-
    - Go to [webtimer.cc](https://webtimer.cc/) in any web browser.
    - Choose a unique **session ID** to identify your timer.
 
 2. Open the timer on another device. Connect as many devices as you like:
-
    - Scan the **QR code** to open the timer.
    - Or go to [webtimer.cc](https://webtimer.cc/) and enter your session ID.
 
 3. Control the timer from any connected device:
-
    - Set a **countdown** timer with the allotted time.
    - **Start** or **stop** the timer at any moment.
    - **Add** or **subtract** to adjust the time.
