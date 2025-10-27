@@ -52,7 +52,7 @@ jobs:
           make all multiarch
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         id: artifact-upload-step
         with:
           name: dist
@@ -167,7 +167,7 @@ jobs:
           release: stable
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         id: artifact-upload-step
         with:
           name: snap-${{ matrix.snap_arch }}
@@ -190,7 +190,7 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           path: dist
           merge-multiple: true
