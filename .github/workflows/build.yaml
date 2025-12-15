@@ -15,7 +15,7 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -52,7 +52,7 @@ jobs:
           make all multiarch
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         id: artifact-upload-step
         with:
           name: dist
@@ -70,7 +70,7 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -139,7 +139,7 @@ jobs:
         snap_arch: [amd64, arm64]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -167,7 +167,7 @@ jobs:
           release: stable
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         id: artifact-upload-step
         with:
           name: snap-${{ matrix.snap_arch }}
@@ -190,7 +190,7 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: dist
           merge-multiple: true
