@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@msgpack/msgpack": "^v3.1.2",
+    "@msgpack/msgpack": "^v3.1.3",
     "normalize.css": "^8.0.1",
     "qr-svg": "^1.1.0",
     "textfit": "^2.4.0"
