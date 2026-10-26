@@ -19,7 +19,6 @@
  * @returns The timestamp string of the format M:SS.
  */
 export function formatTime(seconds: number): string {
-    const negative = seconds < 0;
     seconds = Math.round(Math.abs(seconds));
     const components = [];
     while (seconds > 0) {
@@ -35,5 +34,4 @@ export function formatTime(seconds: number): string {
             components[i] < 10 ? `0${components[i]}` : `${components[i]}`;
     }
     return components.join(":");
-    return (negative ? "-" : "") + components.join(":");
 }
