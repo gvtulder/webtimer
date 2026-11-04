@@ -24,9 +24,9 @@ export class Router {
     private basePathRegexp: RegExp;
     private wsUrl: WsUrlFunction;
 
-    private timerController: TimerController;
-    private timerDisplay: TimerDisplay;
-    private splashDisplay: SplashDisplay;
+    private timerController?: TimerController;
+    private timerDisplay?: TimerDisplay;
+    private splashDisplay?: SplashDisplay;
 
     constructor(basePath: string, wsUrl: WsUrlFunction) {
         if (!basePath) basePath = "/";
@@ -68,15 +68,15 @@ export class Router {
             }
             document.body.classList.add("show-splash");
             document.body.classList.remove("show-timer");
-            this.timerController.disconnect();
-            this.splashDisplay.activate(key);
+            this.timerController?.disconnect();
+            this.splashDisplay?.activate(key);
         } else if (path.match("^[-a-zA-Z0-9]{5,}/$")) {
             // subdir
             const key = path.replace("/", "");
             document.body.classList.add("show-timer");
             document.body.classList.remove("show-splash");
-            this.timerController.connect(this.wsUrl(key));
-            this.timerDisplay.activate();
+            this.timerController?.connect(this.wsUrl(key));
+            this.timerDisplay?.activate();
         } else if (path.match("^[-a-zA-Z0-9]{5,}$")) {
             // add trailing slash
             this.navigateTo(`${this.basePath}${path}/`);

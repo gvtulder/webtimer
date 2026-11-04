@@ -32,11 +32,11 @@ const decoder = new Decoder();
  * The controller automatically attempts to reconnect if the connection is lost.
  */
 export class TimerControllerWebsocket implements TimerController {
-    private url: string;
-    private ws: WebSocket;
-    private timeout: number;
+    private url?: string | null;
+    private ws?: WebSocket | null;
+    private timeout?: number;
     private listeners: TimerEventListener[];
-    private lastEvent: TimerEvent;
+    private lastEvent?: TimerEvent;
 
     constructor() {
         this.listeners = [];
@@ -50,21 +50,21 @@ export class TimerControllerWebsocket implements TimerController {
         this.url = url;
         this.ws = new WebSocket(this.url);
         const reconnect = (): void => {
-            this.ws.close();
+            this.ws?.close();
             this.connect(url);
         };
         this.ws.addEventListener("message", async (ev: MessageEvent) => {
-            let msg = null;
+            let msg : {version?: string, a?: boolean, b?: boolean, c?: boolean, r?: boolean, s?: number, C?: number} | null = null;
             if (ev.data instanceof Blob) {
-                msg = decoder.decode(await (ev.data as Blob).arrayBuffer());
+                msg = decoder.decode(await (ev.data as Blob).arrayBuffer()) as object;
             } else if (ev.data instanceof ArrayBuffer) {
-                msg = decoder.decode(ev.data);
+                msg = decoder.decode(ev.data) as object;
             }
-            if (msg !== null && msg.version) {
+            if (msg?.version) {
                 console.log(
                     `Connected to webtimer.cc server ${url} (version ${msg.version})`,
                 );
-            } else if (msg !== null) {
+            } else if (msg) {
                 this.triggerEvent({
                     type: TimerEventType.UpdateRemainingSeconds,
                     connected: true,
@@ -96,14 +96,12 @@ export class TimerControllerWebsocket implements TimerController {
         if (this.timeout) {
             window.clearTimeout(this.timeout);
         }
-        if (this.ws) {
-            this.ws.close();
-            this.ws = null;
-        }
+        this.ws?.close();
+        this.ws = null;
     }
 
     private send(msg: unknown): void {
-        this.ws.send(encoder.encode(msg));
+        this.ws?.send(encoder.encode(msg));
     }
 
     setRemainingSeconds(seconds: number): void {
@@ -117,6 +115,7 @@ export class TimerControllerWebsocket implements TimerController {
             }
             if (
                 !this.lastEvent.countdown &&
+                this.lastEvent.remainingSeconds &&
                 this.lastEvent.remainingSeconds < 0
             ) {
                 if (this.lastEvent.remainingSeconds - seconds > 0) {

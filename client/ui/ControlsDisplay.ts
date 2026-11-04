@@ -31,13 +31,7 @@ export class ControlsDisplay {
 
     constructor(controller: TimerController) {
         this.controller = controller;
-        this.build();
-        controller.addListener((event: TimerEvent) => {
-            this.handleTimerEvent(event);
-        });
-    }
 
-    build(): void {
         const div = document.createElement("div");
         div.className = "controls-display";
         this.element = div;
@@ -166,13 +160,17 @@ export class ControlsDisplay {
         );
 
         this.addDropdownHandlers();
+
+        controller.addListener((event: TimerEvent) => {
+            this.handleTimerEvent(event);
+        });
     }
 
     handleTimerEvent(event: TimerEvent): void {
         if (event.type == TimerEventType.UpdateRemainingSeconds) {
             this.btnStart.toggleEnabled(!event.running);
-            this.btnPause.toggleEnabled(event.running);
-            this.btnBlack.toggleOnOff(event.black);
+            this.btnPause.toggleEnabled(!!event.running);
+            this.btnBlack.toggleOnOff(!!event.black);
         }
     }
 
@@ -199,15 +197,12 @@ class ButtonList {
     btnUp: HTMLButtonElement;
     list: HTMLUListElement;
     buttons: Button[];
-    lastClicked: Button;
-    lastClickedHandler: ButtonHandler;
+    lastClicked?: Button;
+    lastClickedHandler?: ButtonHandler;
 
     constructor(name: string) {
-        this.build(name);
         this.buttons = [];
-    }
 
-    build(name: string): void {
         const div = document.createElement("div");
         div.className = `button-list ${name}`;
 
@@ -219,7 +214,9 @@ class ButtonList {
         btnCurrent.className = "current";
         combo.appendChild(btnCurrent);
         btnCurrent.addEventListener("click", () => {
-            this.lastClickedHandler(this.lastClicked);
+            if (this.lastClickedHandler && this.lastClicked) {
+                this.lastClickedHandler(this.lastClicked);
+            }
         });
         this.btnCurrent = btnCurrent;
 
@@ -250,12 +247,16 @@ class ButtonList {
 
         const oldHandler = button.handler;
         button.handler = (tgt: Button): void => {
-            this.updateLastClicked(button, oldHandler);
-            oldHandler(tgt);
+            if (oldHandler) {
+                this.updateLastClicked(button, oldHandler);
+                oldHandler(tgt);
+            }
         };
 
         if (setLastClicked) {
-            this.updateLastClicked(button, oldHandler);
+            if (oldHandler) {
+                this.updateLastClicked(button, oldHandler);
+            }
         }
 
         return button;
@@ -270,19 +271,18 @@ class ButtonList {
 
 class Button {
     element: HTMLButtonElement;
-    handler: ButtonHandler;
+    handler?: ButtonHandler;
 
     constructor(
         name: string,
         text: string,
-        icon?: string,
-        handler?: ButtonHandler,
+        icon?: string | null,
+        handler?: ButtonHandler | null,
     ) {
-        this.build(name, text, icon);
-        this.handler = handler;
-    }
+        if (handler) {
+            this.handler = handler;
+        }
 
-    build(name: string, text: string, icon: string): void {
         const button = document.createElement("button");
         button.className = `button-${name}`;
         if (!icon) {

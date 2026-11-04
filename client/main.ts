@@ -28,7 +28,7 @@ export function startApp(basePath: string, wsUrl: WsUrlFunction): Router {
 
     const router = new Router(basePath, wsUrl);
 
-    const container = document.getElementById("container");
+    const container = document.getElementById("container")!;
 
     const timerDisplay = new TimerDisplay(controller, router);
     container.appendChild(timerDisplay.element);
@@ -38,7 +38,7 @@ export function startApp(basePath: string, wsUrl: WsUrlFunction): Router {
 
     const splashDisplay = new SplashDisplay(router);
 
-    let wakeLock = null;
+    let wakeLock : null | WakeLockSentinel = null;
 
     async function enableWakeLock(): Promise<void> {
         if (!wakeLock && "wakeLock" in navigator) {

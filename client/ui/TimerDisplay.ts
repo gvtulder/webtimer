@@ -37,17 +37,7 @@ export class TimerDisplay {
     constructor(controller: TimerController, router: Router) {
         this.controller = controller;
         this.router = router;
-        this.build();
-        controller.addListener((event: TimerEvent) => {
-            this.handleTimerEvent(event);
-        });
-    }
 
-    activate(): void {
-        this.renderQR();
-    }
-
-    build(): void {
         const div = document.createElement("div");
         div.className = "timer-display";
         this.element = div;
@@ -158,6 +148,14 @@ export class TimerDisplay {
             qr.classList.remove("visible");
             evt.preventDefault();
         });
+
+        controller.addListener((event: TimerEvent) => {
+            this.handleTimerEvent(event);
+        });
+    }
+
+    activate(): void {
+        this.renderQR();
     }
 
     renderQR(): void {
@@ -185,7 +183,7 @@ export class TimerDisplay {
 
     handleTimerEvent(event: TimerEvent): void {
         if (event.type == TimerEventType.UpdateRemainingSeconds) {
-            this.showTime(event.active ? event.remainingSeconds : 0);
+            this.showTime(event.active ? event.remainingSeconds || 0 : 0);
 
             this.element.classList.toggle("black", event.black);
             this.element.classList.toggle("countdown", event.countdown);
@@ -198,6 +196,7 @@ export class TimerDisplay {
                 event.active &&
                     event.countdown &&
                     event.remainingSeconds !== null &&
+                    event.remainingSeconds !== undefined &&
                     event.remainingSeconds <= 0,
             );
             this.element.classList.toggle(
@@ -205,13 +204,14 @@ export class TimerDisplay {
                 event.active &&
                     event.countdown &&
                     event.remainingSeconds !== null &&
+                    event.remainingSeconds !== undefined &&
                     event.remainingSeconds <= 60 &&
                     event.remainingSeconds > 0,
             );
 
             if (event.clients == 2) {
                 this.statusBar.innerHTML = "+1 connected";
-            } else if (event.clients > 2) {
+            } else if (event.clients && event.clients > 2) {
                 this.statusBar.innerHTML = `+${event.clients - 1} connected`;
             } else {
                 this.statusBar.innerHTML = "";
@@ -227,10 +227,12 @@ export class TimerDisplay {
 class TimeDisplay {
     element: HTMLDivElement;
 
-    private currentText: string;
+    private currentText?: string;
 
     constructor() {
-        this.build();
+        const div = document.createElement("div");
+        div.className = "time";
+        this.element = div;
 
         window.addEventListener("resize", () => {
             this.updateTextFit();
@@ -238,12 +240,6 @@ class TimeDisplay {
         new ResizeObserver(() => {
             this.updateTextFit();
         }).observe(this.element);
-    }
-
-    build(): void {
-        const div = document.createElement("div");
-        div.className = "time";
-        this.element = div;
     }
 
     showTime(seconds: number): void {
