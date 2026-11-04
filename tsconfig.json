@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "rootDir": ".",
     "outDir": "build/"
   }
 }
