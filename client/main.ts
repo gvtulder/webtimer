@@ -38,7 +38,7 @@ export function startApp(basePath: string, wsUrl: WsUrlFunction): Router {
 
     const splashDisplay = new SplashDisplay(router);
 
-    let wakeLock : null | WakeLockSentinel = null;
+    let wakeLock: null | WakeLockSentinel = null;
 
     async function enableWakeLock(): Promise<void> {
         if (!wakeLock && "wakeLock" in navigator) {

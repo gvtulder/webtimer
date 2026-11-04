@@ -54,9 +54,19 @@ export class TimerControllerWebsocket implements TimerController {
             this.connect(url);
         };
         this.ws.addEventListener("message", async (ev: MessageEvent) => {
-            let msg : {version?: string, a?: boolean, b?: boolean, c?: boolean, r?: boolean, s?: number, C?: number} | null = null;
+            let msg: {
+                version?: string;
+                a?: boolean;
+                b?: boolean;
+                c?: boolean;
+                r?: boolean;
+                s?: number;
+                C?: number;
+            } | null = null;
             if (ev.data instanceof Blob) {
-                msg = decoder.decode(await (ev.data as Blob).arrayBuffer()) as object;
+                msg = decoder.decode(
+                    await (ev.data as Blob).arrayBuffer(),
+                ) as object;
             } else if (ev.data instanceof ArrayBuffer) {
                 msg = decoder.decode(ev.data) as object;
             }

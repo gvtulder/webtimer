@@ -31,7 +31,9 @@ export function formatTime(seconds: number): string {
     components.reverse();
     for (let i = 1; i < components.length; i++) {
         components[i] =
-            components[i] as number < 10 ? `0${components[i]}` : `${components[i]}`;
+            (components[i] as number) < 10
+                ? `0${components[i]}`
+                : `${components[i]}`;
     }
     return components.join(":");
 }
