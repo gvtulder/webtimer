@@ -75,10 +75,11 @@ services:
 
 ## Command-line parameters
 
-| Parameter            | Description                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------- |
-| `--addr <IP>:<PORT>` | Run the server on a specific IP address and port. (Default: `:8000`)                        |
-| `--web <DIR>`        | Load HTML, JS and CSS from this directory. (Default: use the files included in the binary.) |
+| Parameter            | Description                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| `--addr <IP>:<PORT>` | Run the server on a specific IP address and port. (Default: `:8000`)                             |
+| `--web <DIR>`        | Load HTML, JS and CSS from this directory. (Default: use the files included in the binary.)      |
+| `--state <FILE>`     | Load and write the timer states to a JSON file. (Default: timer states are only kept in memory.) |
 
 ## Building from scratch
 

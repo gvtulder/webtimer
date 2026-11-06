@@ -32,6 +32,7 @@ var Version = "UNDEFINED"
 
 var addr string
 var frontendPath string
+var persistencePath string
 var showVersion bool
 var showLicense bool
 
@@ -45,6 +46,7 @@ var embedFrontend embed.FS
 func init() {
 	flag.StringVar(&addr, "addr", ":8000", "http service address")
 	flag.StringVar(&frontendPath, "web", "", "frontend resources path")
+	flag.StringVar(&persistencePath, "state", "", "load/save state to a JSON file")
 	flag.BoolVar(&showVersion, "version", false, "show version")
 	flag.BoolVar(&showLicense, "license", false, "show license information")
 	flag.Parse()
@@ -136,5 +138,5 @@ func main() {
 		"  └───────────────────────────────────────────────────────────────┘\n\n")
 
 	logger.SetFlags(log.LstdFlags)
-	server.RunServer(addr, frontend, logger, Version)
+	server.RunServer(addr, frontend, persistencePath, logger, Version)
 }

@@ -33,8 +33,8 @@ func addCacheHeaders(next http.Handler) http.Handler {
 }
 
 // RunServer starts a http.Server to server the application and WebSocket.
-func RunServer(addr string, frontend fs.FS, logger *log.Logger, version string) {
-	hub := newHub(logger, version)
+func RunServer(addr string, frontend fs.FS, persistencePath string, logger *log.Logger, version string) {
+	hub := newHub(logger, version, persistencePath)
 	go hub.run()
 
 	r := mux.NewRouter()

@@ -43,7 +43,14 @@ type Session struct {
 func newSession(h *Hub, key string) *Session {
 	timer := NewTimer()
 	watch := NewTimerWatch(timer)
-	session := &Session{key: key, timer: timer, watch: watch, done: make(chan struct{}), clients: make(map[*Client]struct{})}
+	session := &Session{
+		key:            key,
+		timer:          timer,
+		watch:          watch,
+		done:           make(chan struct{}),
+		clients:        make(map[*Client]struct{}),
+		lastDisconnect: time.Now().Unix(),
+	}
 	h.sessions[key] = session
 
 	watch.Start()
@@ -85,19 +92,20 @@ func (s *Session) stop() {
 
 // The Hub manages the list of timer Sessions and the Clients connected to the WebSocket.
 type Hub struct {
-	logger         *log.Logger                // the server's logger
-	broadcast      chan TimerStateMessage     // channel for messages to be sent to clients
-	commands       chan CommandMessage        // channel for commands sent by the clients
-	sessions       map[string]*Session        // set of running sessions mapped by key
-	clients        map[*Client]struct{}       // set of connected clients
-	register       chan *Client               // channel where new clients are registered
-	unregister     chan *Client               // channel where disconnecting clients are unregistered
-	cleanup        *time.Ticker               // running a regular cleanup process to remove stale timers
-	welcomeMessage *websocket.PreparedMessage // the welcome message sent to all new clients
+	logger          *log.Logger                // the server's logger
+	persistencePath string                     // the path to the JSON state file, or nil
+	broadcast       chan TimerStateMessage     // channel for messages to be sent to clients
+	commands        chan CommandMessage        // channel for commands sent by the clients
+	sessions        map[string]*Session        // set of running sessions mapped by key
+	clients         map[*Client]struct{}       // set of connected clients
+	register        chan *Client               // channel where new clients are registered
+	unregister      chan *Client               // channel where disconnecting clients are unregistered
+	cleanup         *time.Ticker               // running a regular cleanup process to remove stale timers
+	welcomeMessage  *websocket.PreparedMessage // the welcome message sent to all new clients
 }
 
 // newHub creates a new Hub to manage clients and timer sessions.
-func newHub(logger *log.Logger, version string) *Hub {
+func newHub(logger *log.Logger, version string, persistencePath string) *Hub {
 	welcomeMessage := VersionMessage{Version: version}
 	p, err := welcomeMessage.prepareWebsocketMessage()
 	if err != nil {
@@ -105,14 +113,15 @@ func newHub(logger *log.Logger, version string) *Hub {
 	}
 
 	return &Hub{
-		logger:         logger,
-		broadcast:      make(chan TimerStateMessage),
-		commands:       make(chan CommandMessage),
-		sessions:       make(map[string]*Session),
-		register:       make(chan *Client),
-		unregister:     make(chan *Client),
-		clients:        make(map[*Client]struct{}),
-		welcomeMessage: p,
+		logger:          logger,
+		persistencePath: persistencePath,
+		broadcast:       make(chan TimerStateMessage),
+		commands:        make(chan CommandMessage),
+		sessions:        make(map[string]*Session),
+		register:        make(chan *Client),
+		unregister:      make(chan *Client),
+		clients:         make(map[*Client]struct{}),
+		welcomeMessage:  p,
 	}
 }
 
@@ -164,6 +173,20 @@ func (h *Hub) sendToClients(msg TimerStateMessage) {
 
 // run starts the Hub. The Hub processes client connections/disconnections and timer events.
 func (h *Hub) run() {
+	// initialize the persistence loop that writes the state to a JSON file
+	persistenceLoop := (*PersistenceLoop)(nil)
+	if h.persistencePath != "" {
+		// attempt to load the initial state
+		state, err := LoadTimerState(h.persistencePath)
+		if err != nil {
+			h.logger.Printf("Could not restore state from %s: %v", h.persistencePath, err)
+		} else {
+			h.restore(state)
+		}
+		persistenceLoop = NewPersistenceLoop(h.logger, h.persistencePath)
+		defer persistenceLoop.Close()
+	}
+
 	h.cleanup = time.NewTicker(CLEANUP_INTERVAL * time.Second)
 	for {
 		select {
@@ -212,6 +235,9 @@ func (h *Hub) run() {
 			case "toggleblack":
 				timer.ToggleBlack()
 			}
+			if persistenceLoop != nil {
+				persistenceLoop.Save(*h.serialize())
+			}
 
 		// periodically remove sessions without active clients
 		case <-h.cleanup.C:
@@ -225,5 +251,32 @@ func (h *Hub) run() {
 				}
 			}
 		}
+	}
+}
+
+// serialize serializes the current timer states for JSON export.
+func (h *Hub) serialize() *PersistedTimers {
+	state := &PersistedTimers{
+		Timers: make(map[string]PersistedTimer),
+	}
+	for key, session := range h.sessions {
+		state.Timers[key] = PersistedTimer{
+			Black:            session.timer.black,
+			Countdown:        session.timer.countdown,
+			StartTime:        session.timer.startTime,
+			RemainingAtStart: session.timer.remainingAtStart,
+		}
+	}
+	return state
+}
+
+// restore restores the timer states from a JSON import.
+func (h *Hub) restore(state *PersistedTimers) {
+	for key, timerState := range state.Timers {
+		session := h.getSession(key)
+		session.timer.black = timerState.Black
+		session.timer.countdown = timerState.Countdown
+		session.timer.startTime = timerState.StartTime
+		session.timer.remainingAtStart = timerState.RemainingAtStart
 	}
 }
